@@ -1,6 +1,3 @@
-# To use this as your local workstation:
-# docker run -it --name swisskube -v dedevsecops:/root registry.gitlab.com/dedevsecops/swisskube bash
-
 FROM alpine:3.10.0
 
 # Get latest version numbers by running update.sh script in this directory.
@@ -37,7 +34,7 @@ WORKDIR /usr/local/bin
 
 RUN curl -o aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64 && chmod +x aws-iam-authenticator
 RUN curl -o helmfile https://github.com/roboll/helmfile/releases/download/$HELMFILE_VERSION/helmfile_linux_amd64 && chmod +x helmfile
-RUN curl https://kubernetes-helm.storage.googleapis.com/helm-${HELM_VERSION}-linux-amd64.tar.gz | tar -x --strip-components=1 linux-amd64/helm && chmod +x helm
+RUN curl -o /tmp/helm.tar.gz https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz && tar -xf /tmp/helm.tar.gz && mv linux-amd64/helm . && mv linux-amd64/tiller . && rm -rf linux-amd64 
 RUN curl -O https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl && chmod +x kubectl
 RUN curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && unzip /tmp/terraform.zip && chmod +x /usr/local/bin/terraform && rm /tmp/terraform.zip
 RUN curl -o vert https://github.com/Masterminds/vert/releases/download/${VERT_VERSION}/vert-${VERT_VERSION}-linux-amd64 && chmod +x vert
