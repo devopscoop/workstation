@@ -32,12 +32,12 @@ RUN pip3 install --no-cache-dir awscli "yamale==$YAMALE_VERSION" "yamllint==$YAM
 
 WORKDIR /usr/local/bin
 
-RUN curl -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator
+RUN curl -L -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator
 RUN curl -L -o helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64" && chmod +x helmfile
 RUN curl -o /tmp/helm.tar.gz "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz" && tar -xf /tmp/helm.tar.gz && mv linux-amd64/helm . && mv linux-amd64/tiller . && rm -rf linux-amd64 
 RUN curl -O "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && chmod +x kubectl
 RUN curl -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && chmod +x /usr/local/bin/terraform && rm /tmp/terraform.zip
-RUN curl -o vert "https://github.com/Masterminds/vert/releases/download/${VERT_VERSION}/vert-${VERT_VERSION}-linux-amd64" && chmod +x vert
+RUN curl -L -o vert "https://github.com/Masterminds/vert/releases/download/${VERT_VERSION}/vert-${VERT_VERSION}-linux-amd64" && chmod +x vert
 
 RUN adduser -D gitlab-runner
 USER gitlab-runner
