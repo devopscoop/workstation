@@ -8,13 +8,13 @@ This image was created to be used as:
 To use this as your local workstation, you should run it interactively, mount a volume named after the Kubernetes cluster you're managing, and specify the specific version of this image that works with that cluster. For example, if I had a Kubernetes cluster named "glados-dev", I would use a command like this:
 
 ```bash
-docker run -it --rm -v glados-dev:/root registry.gitlab.com/dedevsecops/workstation:jt84h3jr bash
+docker run -it --rm -v glados-dev:/root registry.gitlab.com/dedevsecops/workstation:021cb63b bash
 ```
 
 Set a prompt so you always know which cluster you're in. Edit your .profile:
 
 ```bash
-vi .profile
+vi .bashrc
 ```
 And add this line (replace glados-dev with your cluster name):
 
