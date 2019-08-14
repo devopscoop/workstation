@@ -12,4 +12,6 @@ export GITLAB_ORG=dedevsecops
 #
 # This will ensure that everyone working on this cluster will be using the same
 # versions of kubectl, helm, etc.
+#
+# DO NOT USE "latest"!
 export WORKSTATION_VERSION=021cb63b
