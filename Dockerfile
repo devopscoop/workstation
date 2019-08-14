@@ -1,32 +1,30 @@
-FROM alpine:3.10.0
+FROM alpine:3.10.1
 
 # Get latest version numbers by running update.sh script in this directory.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.4.0
-ENV HELMFILE_VERSION=v0.80.0
-ENV HELM_VERSION=v2.14.1
-ENV KUBECTL_VERSION=v1.15.0
-ENV TERRAFORM_VERSION=0.12.3
+ENV HELMFILE_VERSION=v0.80.2
+ENV HELM_VERSION=v2.14.3
+ENV KUBECTL_VERSION=v1.15.2
+ENV TERRAFORM_VERSION=0.12.6
 ENV VERT_VERSION=v0.1.0
-ENV YAMALE_VERSION=1.10.0
-ENV YAML_LINT_VERSION=1.16.0
+ENV YAMALE_VERSION=1.10.1
+ENV YAML_LINT_VERSION=1.17.0
 ENV YQ_VERSION=2.7.2
 
-# Adding this:
-ENV PATH "/root/.local/bin:${PATH}"
-# To fix this message during pip3 upgrade:
+# Adding this to fix this message during pip3 upgrade:
 # The scripts pyrsa-decrypt, pyrsa-decrypt-bigfile, pyrsa-encrypt,
 # pyrsa-encrypt-bigfile, pyrsa-keygen, pyrsa-priv2pub, pyrsa-sign and
 # pyrsa-verify are installed in '/root/.local/bin' which is not on PATH.
 # Consider adding this directory to PATH or, if you prefer to suppress this
 # warning, use --no-warn-script-location.
+ENV PATH "/root/.local/bin:${PATH}"
 
 RUN apk --no-cache add bash ca-certificates curl gettext git groff jq openssh-client python3
 
-# Adding this:
-RUN pip3 install --no-cache-dir --upgrade pip
-# To fix this message during pip3 install:
+# Adding this to fix this message during pip3 install:
 # You are using pip version 19.0.3, however version 19.1.1 is available. You
 # should consider upgrading via the 'pip install --upgrade pip' command.
+RUN pip3 install --no-cache-dir --upgrade pip
 
 RUN pip3 install --no-cache-dir awscli "yamale==$YAMALE_VERSION" "yamllint==$YAML_LINT_VERSION" "yq==$YQ_VERSION"
 
@@ -45,3 +43,5 @@ WORKDIR /root
 RUN helm init --client-only
 RUN helm plugin install https://github.com/databus23/helm-diff
 RUN helm plugin install https://github.com/chartmuseum/helm-push
+
+COPY .bashrc .
