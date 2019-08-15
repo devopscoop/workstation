@@ -3,6 +3,7 @@ export AWS_DEFAULT_REGION='us-east-2'
 export AWS_PROFILE='dedevsecops'
 export CLUSTER_NAME=tenant-dev
 export DOMAIN_NAME=dedevsecops.com
+export EMAIL=info@dedevsecops.com
 export GITLAB_ORG=dedevsecops
 
 # If you're creating a new Kubernetes cluster, set WORKSTATION_VERSION to the
