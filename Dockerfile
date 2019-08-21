@@ -1,13 +1,16 @@
-FROM alpine:3.10.1
+FROM alpine:3.10.2
 
 # Get latest version numbers by running update.sh script in this directory.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.4.0
-ENV HELMFILE_VERSION=v0.80.2
+ENV HELM-DIFF_VERSION=v2.11.0+5
+ENV HELM-GIT_VERSION=releases
+ENV HELM-PUSH_VERSION=v0.7.1
+ENV HELMFILE_VERSION=v0.81.0
 ENV HELM_VERSION=v2.14.3
-ENV KUBECTL_VERSION=v1.15.2
+ENV KUBECTL_VERSION=v1.15.3
 ENV TERRAFORM_VERSION=0.12.6
 ENV VERT_VERSION=v0.1.0
-ENV YAMALE_VERSION=1.10.1
+ENV YAMALE_VERSION=2.0
 ENV YAML_LINT_VERSION=1.17.0
 ENV YQ_VERSION=2.7.2
 
@@ -19,7 +22,7 @@ ENV YQ_VERSION=2.7.2
 # warning, use --no-warn-script-location.
 ENV PATH "/root/.local/bin:${PATH}"
 
-RUN apk --no-cache add bash ca-certificates curl gettext git groff jq openssh-client python3
+RUN apk --no-cache add bash ca-certificates curl gettext git groff jq openssh-client python3 vim
 
 # Adding this to fix this message during pip3 install:
 # You are using pip version 19.0.3, however version 19.1.1 is available. You
@@ -41,7 +44,8 @@ RUN curl -L -o vert "https://github.com/Masterminds/vert/releases/download/${VER
 WORKDIR /root
 
 RUN helm init --client-only
-RUN helm plugin install https://github.com/databus23/helm-diff
-RUN helm plugin install https://github.com/chartmuseum/helm-push
+RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM-GIT_VERSION}"
+RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM-PUSH_VERSION}"
+RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM-DIFF_VERSION}"
 
 COPY .bashrc .
