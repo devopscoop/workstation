@@ -2,9 +2,9 @@ FROM alpine:3.10.2
 
 # Get latest version numbers by running update.sh script in this directory.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.4.0
-ENV HELM-DIFF_VERSION=v2.11.0+5
-ENV HELM-GIT_VERSION=releases
-ENV HELM-PUSH_VERSION=v0.7.1
+ENV HELM_DIFF_VERSION=v2.11.0+5
+ENV HELM_GIT_VERSION=releases
+ENV HELM_PUSH_VERSION=v0.7.1
 ENV HELMFILE_VERSION=v0.81.0
 ENV HELM_VERSION=v2.14.3
 ENV KUBECTL_VERSION=v1.15.3
@@ -44,8 +44,8 @@ RUN curl -L -o vert "https://github.com/Masterminds/vert/releases/download/${VER
 WORKDIR /root
 
 RUN helm init --client-only
-RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM-GIT_VERSION}"
-RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM-PUSH_VERSION}"
-RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM-DIFF_VERSION}"
+RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
+RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
+RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
 
 COPY .bashrc .
