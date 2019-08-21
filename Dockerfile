@@ -3,7 +3,7 @@ FROM alpine:3.10.2
 # Get latest version numbers by running update.sh script in this directory.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.4.0
 ENV HELM_DIFF_VERSION=v2.11.0+5
-ENV HELM_GIT_VERSION=releases
+ENV HELM_GIT_VERSION=v0.4.2
 ENV HELM_PUSH_VERSION=v0.7.1
 ENV HELMFILE_VERSION=v0.81.0
 ENV HELM_VERSION=v2.14.3
