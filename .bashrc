@@ -4,4 +4,5 @@ if [[ -f /mnt/env.sh ]]; then
   cd /mnt
   source env.sh
   export PS1="\u@${CLUSTER_NAME}:\w\$ "
+  export KUBECONFIG=/mnt/kubeconfig
 fi
