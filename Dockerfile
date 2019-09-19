@@ -7,6 +7,7 @@ ENV HELM_DIFF_VERSION=v2.11.0+5
 ENV HELM_GIT_VERSION=v0.4.2
 ENV HELM_PUSH_VERSION=v0.7.1
 ENV HELM_VERSION=v2.14.3
+ENV K9S_VERSION=0.8.4
 ENV KUBECTL_VERSION=v1.16.0
 ENV TERRAFORM_VERSION=0.12.9
 ENV VERT_VERSION=v0.1.0
@@ -37,6 +38,7 @@ RUN curl -L -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam
 RUN curl -sL https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_Linux_amd64.tar.gz | tar -xz && chmod +x eksctl
 RUN curl -L -o helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64" && chmod +x helmfile
 RUN curl -s "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm . && mv linux-amd64/tiller . && rm -rf linux-amd64
+RUN curl -sL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_${K9S_VERSION}_Linux_x86_64.tar.gz" | tar -xz
 RUN curl -O "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && chmod +x kubectl
 RUN curl -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && chmod +x /usr/local/bin/terraform && rm /tmp/terraform.zip
 RUN curl -L -o vert "https://github.com/Masterminds/vert/releases/download/${VERT_VERSION}/vert-${VERT_VERSION}-linux-amd64" && chmod +x vert
