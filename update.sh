@@ -18,6 +18,7 @@ echo "ENV HELM_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' ht
 echo "ENV K9S_VERSION=0.8.4"
 
 echo "ENV KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
+echo "ENV SOPS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mozilla/sops/releases/latest))"
 echo "ENV TERRAFORM_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/hashicorp/terraform/releases/latest) | sed 's/^v//')"
 echo "ENV VERT_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/Masterminds/vert/releases/latest))"
 echo "ENV YAMALE_VERSION=$(pip3 search yamale | grep '^yamale ' | sed -E 's/.*\((.+)\).*/\1/')"
