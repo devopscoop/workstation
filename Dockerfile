@@ -1,11 +1,12 @@
 FROM alpine:3.10.2
 
-# Get latest version numbers by running update.sh script in this directory.
+# These version numbers were automatically generated with the update.sh script.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.4.0
-ENV HELMFILE_VERSION=v0.85.1
+ENV HELMFILE_VERSION=v0.85.2
 ENV HELM_DIFF_VERSION=v2.11.0+5
 ENV HELM_GIT_VERSION=v0.4.2
 ENV HELM_PUSH_VERSION=v0.7.1
+ENV HELM_SECRETS_VERSION=v2.0.2
 ENV HELM_VERSION=v2.14.3
 ENV K9S_VERSION=0.8.4
 ENV KUBECTL_VERSION=v1.16.0
@@ -49,5 +50,6 @@ RUN helm init --client-only
 RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
 RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
 RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
+RUN helm plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
 COPY .bashrc .
