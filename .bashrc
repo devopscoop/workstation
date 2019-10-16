@@ -6,4 +6,6 @@ if [[ -f /mnt/env.sh ]]; then
   export PS1="\u@${CLUSTER_NAME}:\w\$ "
   export KUBECONFIG=/mnt/kubeconfig
 fi
+
 export EDITOR=vim
+gpg-agent --daemon --enable-ssh-support
