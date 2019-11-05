@@ -15,7 +15,7 @@ echo "ENV HELM_SECRETS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_
 echo "ENV HELM_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/helm/helm/releases/latest))"
 
 # Helm 3 is still in pre-release state.
-echo "ENV HELM3_VERSION=v3.0.0-beta.4"
+echo "ENV HELM3_VERSION=v3.0.0-rc.2"
 
 # This is pre-release, there is no latest tag yet.
 #echo "ENV K9S_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/derailed/k9s/releases/latest))"
