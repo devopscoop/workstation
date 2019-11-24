@@ -2,21 +2,22 @@ FROM alpine:3.10.3
 
 # These version numbers were automatically generated with the update.sh script.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.4.0
-ENV FLUXCTL_VERSION=1.15.0
-ENV HELMFILE_VERSION=v0.90.9
+ENV FLUXCTL_VERSION=1.16.0
+ENV GOOGLE_CLOUD_SDK_VERSION=272.0.0
+ENV HELMFILE_VERSION=v0.93.2
 ENV HELM_DIFF_VERSION=v2.11.0+5
-ENV HELM_GIT_VERSION=v0.4.2
+ENV HELM_GIT_VERSION=v0.5.0
 ENV HELM_PUSH_VERSION=v0.7.1
 ENV HELM_SECRETS_VERSION=v2.0.2
 ENV HELM_VERSION=v2.16.1
 ENV HELM3_VERSION=v3.0.0
 ENV K9S_VERSION=0.9.3
 ENV KUBECTL_VERSION=v1.16.3
-ENV SOPS_VERSION=3.4.0
-ENV TERRAFORM_VERSION=0.12.14
+ENV SOPS_VERSION=v3.5.0
+ENV TERRAFORM_VERSION=0.12.16
 ENV VERT_VERSION=v0.1.0
 ENV YAMALE_VERSION=2.0.1
-ENV YAML_LINT_VERSION=1.18.0
+ENV YAML_LINT_VERSION=1.19.0
 ENV YQ_VERSION=2.9.2
 
 # Adding this to fix this message during pip3 upgrade:
@@ -52,6 +53,7 @@ RUN curl -L -o vert "https://github.com/Masterminds/vert/releases/download/${VER
 
 WORKDIR /root
 
+RUN curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" | tar -xz
 RUN helm init --client-only
 RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
 RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"

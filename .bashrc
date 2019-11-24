@@ -9,3 +9,7 @@ fi
 
 export EDITOR=vim
 gpg-agent --daemon --enable-ssh-support
+
+# These lines were copied from the .bashrc after manually running Google Cloud DSK install.sh:
+if [ -f '/root/google-cloud-sdk/path.bash.inc' ]; then . '/root/google-cloud-sdk/path.bash.inc'; fi
+if [ -f '/root/google-cloud-sdk/completion.bash.inc' ]; then . '/root/google-cloud-sdk/completion.bash.inc'; fi
