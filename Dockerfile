@@ -1,10 +1,10 @@
-FROM alpine:3.10.3
+FROM alpine:3.11.2
 
 # These version numbers were automatically generated with the update.sh script.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.4.0
-ENV FLUXCTL_VERSION=1.17.0
+ENV FLUXCTL_VERSION=1.17.1
 ENV GOOGLE_CLOUD_SDK_VERSION=272.0.0
-ENV HELMFILE_VERSION=v0.97.0
+ENV HELMFILE_VERSION=v0.98.2
 ENV HELM_DIFF_VERSION=v3.0.0-rc.7
 ENV HELM_GIT_VERSION=v0.5.0
 ENV HELM_PUSH_VERSION=v0.8.1
@@ -12,13 +12,13 @@ ENV HELM_SECRETS_VERSION=v2.0.2
 ENV HELM_VERSION=v2.16.1
 ENV HELM3_VERSION=v3.0.2
 ENV K9S_VERSION=0.9.3
-ENV KUBECTL_VERSION=v1.17.0
+ENV KUBECTL_VERSION=v1.17.1
 ENV SOPS_VERSION=v3.5.0
-ENV TERRAFORM_VERSION=0.12.18
+ENV TERRAFORM_VERSION=0.12.19
 ENV VERT_VERSION=v0.1.0
 ENV YAMALE_VERSION=2.0.1
-ENV YAML_LINT_VERSION=1.19.0
-ENV YQ_VERSION=2.9.2
+ENV YAML_LINT_VERSION=1.20.0
+ENV YQ_VERSION=2.10.0
 
 # Adding this to fix this message during pip3 upgrade:
 # The scripts pyrsa-decrypt, pyrsa-decrypt-bigfile, pyrsa-encrypt,
@@ -60,4 +60,4 @@ RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HE
 RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
 RUN helm plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
-COPY .bashrc .
+COPY .bash_profile .

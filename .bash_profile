@@ -7,7 +7,7 @@ if [[ -f /mnt/env.sh ]]; then
   export KUBECONFIG=/mnt/kubeconfig
 fi
 
-export EDITOR=vim
+export EDITOR=/usr/bin/vim
 gpg-agent --daemon --enable-ssh-support
 
 # These lines were copied from the .bashrc after manually running Google Cloud DSK install.sh:
