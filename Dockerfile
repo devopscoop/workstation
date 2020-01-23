@@ -61,3 +61,8 @@ RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM
 RUN helm plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
 COPY .profile .
+
+# Behavior changed between Alpine 3.10.3 and 3.11.2, and the image was no
+# longer running .profile. Not sure why. This is a totally legit hack...
+RUN ln -s .profile .bashrc
+RUN ln -s .profile .bash_profile
