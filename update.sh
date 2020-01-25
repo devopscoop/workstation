@@ -9,7 +9,8 @@ echo "ENV AWS_IAM_AUTHENTICATOR_VERSION=$(basename $(curl -s -o /dev/null -w '%{
 echo "ENV FLUXCTL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/fluxcd/flux/releases/latest))"
 
 # Manually setting version number. I didn't see an easy way to find latest version, and I don't care to spend that much time on this.
-echo "ENV GOOGLE_CLOUD_SDK_VERSION=272.0.0"
+# Find the latest version here: https://cloud.google.com/sdk/docs/quickstart-linux
+echo "ENV GOOGLE_CLOUD_SDK_VERSION=277.0.0"
 
 echo "ENV HELMFILE_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/roboll/helmfile/releases/latest))"
 echo "ENV HELM_DIFF_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/databus23/helm-diff/releases/latest))"
