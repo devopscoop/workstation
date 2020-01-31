@@ -10,7 +10,7 @@ ENV HELM_GIT_VERSION=v0.5.0
 ENV HELM_PUSH_VERSION=v0.8.1
 ENV HELM_SECRETS_VERSION=v2.0.2
 ENV HELM_VERSION=v2.16.1
-ENV HELM3_VERSION=v3.0.2
+ENV HELM3_VERSION=v3.0.3
 ENV K9S_VERSION=0.9.3
 ENV KUBECTL_VERSION=v1.17.2
 ENV SOPS_VERSION=v3.5.0
@@ -28,7 +28,7 @@ ENV YQ_VERSION=2.10.0
 # warning, use --no-warn-script-location.
 ENV PATH "/root/.local/bin:${PATH}"
 
-RUN apk --no-cache add bash ca-certificates curl gettext git gnupg groff jq openssh-client python3 vim
+RUN apk --no-cache add bash ca-certificates curl docker gettext git gnupg groff jq openssh-client python3 vim
 
 # Adding this to fix this message during pip3 install:
 # You are using pip version 19.0.3, however version 19.1.1 is available. You
