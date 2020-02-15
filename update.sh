@@ -18,10 +18,10 @@ echo "ENV HELM_GIT_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}
 echo "ENV HELM_PUSH_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/chartmuseum/helm-push/releases/latest))"
 echo "ENV HELM_SECRETS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/futuresimple/helm-secrets/releases/latest))"
 
-# Helm 2 is no longer the latest release. Fixing this to the most recent v2 release.
-echo "ENV HELM_VERSION=v2.16.1"
+# Helm 2 is the latest release again, WTF.
+echo "ENV HELM_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/helm/helm/releases/latest))"
 
-echo "ENV HELM3_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/helm/helm/releases/latest))"
+echo "ENV HELM3_VERSION=v3.1.0"
 
 # This is pre-release, there is no latest tag yet.
 #echo "ENV K9S_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/derailed/k9s/releases/latest))"
