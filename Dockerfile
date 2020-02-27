@@ -60,6 +60,11 @@ RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HE
 RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
 RUN helm plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
+RUN helm3 plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
+RUN helm3 plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
+RUN helm3 plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
+RUN helm3 plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
+
 COPY .profile .
 
 # Behavior changed between Alpine 3.10.3 and 3.11.2, and the image was no
