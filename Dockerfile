@@ -42,7 +42,7 @@ WORKDIR /usr/local/bin
 RUN curl -sL -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator
 RUN curl -sL "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz && chmod +x eksctl
 RUN curl -sL -o fluxctl "https://github.com/fluxcd/flux/releases/download/${FLUXCTL_VERSION}/fluxctl_linux_amd64" && chmod +x fluxctl
-RUN curl -sL "https://get.helm.sh/helm-${HELM2_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm2 && mv linux-amd64/tiller . && rm -rf linux-amd64
+RUN curl -sL "https://get.helm.sh/helm-${HELM2_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm && mv linux-amd64/tiller . && rm -rf linux-amd64
 RUN curl -sL "https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm3 && rm -rf linux-amd64
 RUN curl -sL -o helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64" && chmod +x helmfile
 RUN curl -sL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz" | tar -xz
@@ -56,11 +56,11 @@ WORKDIR /root
 RUN curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" | tar -xz
 
 # Helm 2
-RUN helm2 init --client-only
-RUN helm2 plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
-RUN helm2 plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
-RUN helm2 plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
-RUN helm2 plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
+RUN helm init --client-only
+RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
+RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
+RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
+RUN helm plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
 # Helm 3
 RUN helm3 plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
