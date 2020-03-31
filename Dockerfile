@@ -5,6 +5,7 @@ ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.0
 ENV FLUXCTL_VERSION=1.18.0
 ENV GOOGLE_CLOUD_SDK_VERSION=284.0.0
 ENV HELMFILE_VERSION=v0.102.0
+ENV HELM_2TO3_VERSION=v0.5.1
 ENV HELM_DIFF_VERSION=v3.1.1
 ENV HELM_GIT_VERSION=v0.5.0
 ENV HELM_PUSH_VERSION=v0.8.1
@@ -67,6 +68,7 @@ RUN helm3 plugin install https://github.com/aslafy-z/helm-git --version "${HELM_
 RUN helm3 plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
 RUN helm3 plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
 RUN helm3 plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
+RUN helm3 plugin install https://github.com/helm/helm-2to3 --version "${HELM_2TO3_VERSION}"
 
 COPY .profile .
 
