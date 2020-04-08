@@ -2,6 +2,7 @@ FROM alpine:3.11.5
 
 # These version numbers were automatically generated with the update.sh script.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.0
+ENV EKSCTL_VERSION=0.17.0-rc.0
 ENV FLUXCTL_VERSION=1.19.0
 ENV GOOGLE_CLOUD_SDK_VERSION=284.0.0
 ENV HELMFILE_VERSION=v0.108.0
@@ -46,7 +47,7 @@ RUN pip3 install --no-cache-dir awscli "yamale==$YAMALE_VERSION" "yamllint==$YAM
 WORKDIR /usr/local/bin
 
 RUN curl -sL -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator
-RUN curl -sL "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz && chmod +x eksctl
+RUN curl -sL "https://github.com/weaveworks/eksctl/releases/${EKSCTL_VERSION}/download/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz && chmod +x eksctl
 RUN curl -sL -o fluxctl "https://github.com/fluxcd/flux/releases/download/${FLUXCTL_VERSION}/fluxctl_linux_amd64" && chmod +x fluxctl
 RUN curl -sL "https://get.helm.sh/helm-${HELM2_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm && mv linux-amd64/tiller . && rm -rf linux-amd64
 RUN curl -sL "https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm3 && rm -rf linux-amd64
