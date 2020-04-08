@@ -1,24 +1,29 @@
-FROM alpine:3.11.3
+FROM alpine:3.11.5
 
 # These version numbers were automatically generated with the update.sh script.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.0
-ENV FLUXCTL_VERSION=1.18.0
+ENV FLUXCTL_VERSION=1.19.0
 ENV GOOGLE_CLOUD_SDK_VERSION=284.0.0
-ENV HELMFILE_VERSION=v0.102.0
+ENV HELMFILE_VERSION=v0.108.0
 ENV HELM_2TO3_VERSION=v0.5.1
 ENV HELM_DIFF_VERSION=v3.1.1
-ENV HELM_GIT_VERSION=v0.5.0
+ENV HELM_GIT_VERSION=v0.7.0
 ENV HELM_PUSH_VERSION=v0.8.1
 ENV HELM_SECRETS_VERSION=v2.0.2
-ENV HELM2_VERSION=v2.16.3
+
+# The Helm guys keep flipping the "latest" release between Helm 2 and Helm 3,
+# so you have to set the HELM2 and HELM3 VERSION variables manually.
+# It's currently set to: v2.16.5
+ENV HELM2_VERSION=v2.16.5
 ENV HELM3_VERSION=v3.1.2
-ENV K9S_VERSION=v0.17.7
-ENV KUBECTL_VERSION=v1.17.4
+
+ENV K9S_VERSION=v0.19.1
+ENV KUBECTL_VERSION=v1.18.1
 ENV SOPS_VERSION=v3.5.0
-ENV TERRAFORM_VERSION=0.12.23
+ENV TERRAFORM_VERSION=0.12.24
 ENV VERT_VERSION=v0.1.0
 ENV YAMALE_VERSION=2.0.1
-ENV YAML_LINT_VERSION=1.20.0
+ENV YAML_LINT_VERSION=1.21.0
 ENV YQ_VERSION=2.10.0
 
 # Adding this to fix this message during pip3 upgrade:
@@ -61,14 +66,14 @@ RUN helm init --client-only
 RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
 RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
 RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
-RUN helm plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
+RUN helm plugin install https://github.com/zendesk/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
 # Helm 3
 RUN helm3 plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
 RUN helm3 plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
 RUN helm3 plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
-RUN helm3 plugin install https://github.com/futuresimple/helm-secrets --version "${HELM_SECRETS_VERSION}"
 RUN helm3 plugin install https://github.com/helm/helm-2to3 --version "${HELM_2TO3_VERSION}"
+RUN helm3 plugin install https://github.com/zendesk/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
 COPY .profile .
 
