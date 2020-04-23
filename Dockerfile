@@ -1,4 +1,4 @@
-FROM alpine:3.11.6
+FROM alpine:3.11.5
 
 # These version numbers were automatically generated with the update.sh script.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.0
