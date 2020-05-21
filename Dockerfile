@@ -31,7 +31,7 @@ ENV YQ_VERSION=2.10.0
 # warning, use --no-warn-script-location.
 ENV PATH "/root/.local/bin:${PATH}"
 
-RUN apk --no-cache add bash ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl python3 vim
+RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl python3 vim
 
 # Adding this to fix this message during pip3 install:
 # You are using pip version 19.0.3, however version 19.1.1 is available. You
