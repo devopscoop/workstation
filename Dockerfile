@@ -2,10 +2,10 @@ FROM alpine:3.11.6
 
 # These version numbers were automatically generated with the update.sh script.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.0
-ENV EKSCTL_VERSION=0.20.0-rc.0
+ENV EKSCTL_VERSION=0.20.0
 ENV FLUXCTL_VERSION=1.19.0
 ENV GOOGLE_CLOUD_SDK_VERSION=290.0.0
-ENV HELMFILE_VERSION=v0.116.0
+ENV HELMFILE_VERSION=v0.118.3
 ENV HELM_2TO3_VERSION=v0.5.1
 ENV HELM_DIFF_VERSION=v3.1.1
 ENV HELM_GIT_VERSION=v0.7.0
@@ -13,15 +13,15 @@ ENV HELM_PUSH_VERSION=v0.8.1
 ENV HELM_SECRETS_VERSION=v2.0.2
 ENV HELM2_VERSION=v2.16.7
 ENV HELM3_VERSION=v3.2.1
-ENV K9S_VERSION=v0.19.6
+ENV K9S_VERSION=v0.20.1
 ENV KUBECTL_VERSION=v1.18.3
 ENV SKAFFOLD_VERSION=v1.10.1
 ENV SOPS_VERSION=v3.5.0
-ENV TERRAFORM_VERSION=0.12.25
+ENV TERRAFORM_VERSION=0.12.26
 ENV VERT_VERSION=v0.1.0
 ENV YAMALE_VERSION=2.0.1
 ENV YAML_LINT_VERSION=1.23.0
-ENV YQ_VERSION=2.10.1
+ENV YQ_VERSION=3.3.0
 
 # Adding this to fix this message during pip3 upgrade:
 # The scripts pyrsa-decrypt, pyrsa-decrypt-bigfile, pyrsa-encrypt,
@@ -38,7 +38,7 @@ RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext 
 # should consider upgrading via the 'pip install --upgrade pip' command.
 RUN pip3 install --no-cache-dir --upgrade pip
 
-RUN pip3 install --no-cache-dir awscli "yamale==$YAMALE_VERSION" "yamllint==$YAML_LINT_VERSION" "yq==$YQ_VERSION"
+RUN pip3 install --no-cache-dir awscli "yamale==$YAMALE_VERSION" "yamllint==$YAML_LINT_VERSION"
 
 WORKDIR /usr/local/bin
 
@@ -54,6 +54,7 @@ RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKA
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
 RUN curl -sL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && chmod +x /usr/local/bin/terraform && rm /tmp/terraform.zip
 RUN curl -sL -o vert "https://github.com/Masterminds/vert/releases/download/${VERT_VERSION}/vert-${VERT_VERSION}-linux-amd64" && chmod +x vert
+RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" && chmod +x yq
 
 WORKDIR /root
 
