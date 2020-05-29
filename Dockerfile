@@ -1,4 +1,4 @@
-FROM alpine:3.11.5
+FROM alpine:3.11.6
 
 # These version numbers were automatically generated with the update.sh script.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.0
@@ -14,8 +14,8 @@ ENV HELM_SECRETS_VERSION=v2.0.2
 ENV HELM2_VERSION=v2.16.7
 ENV HELM3_VERSION=v3.2.1
 ENV K9S_VERSION=v0.19.6
-ENV KUBECTL_VERSION=v1.18.2
-ENV SKAFFOLD_VERSION=v1.10.0
+ENV KUBECTL_VERSION=v1.18.3
+ENV SKAFFOLD_VERSION=v1.10.1
 ENV SOPS_VERSION=v3.5.0
 ENV TERRAFORM_VERSION=0.12.25
 ENV VERT_VERSION=v0.1.0
@@ -31,7 +31,7 @@ ENV YQ_VERSION=2.10.1
 # warning, use --no-warn-script-location.
 ENV PATH "/root/.local/bin:${PATH}"
 
-RUN apk --no-cache add bash ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl python3 vim
+RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl python3 vim
 
 # Adding this to fix this message during pip3 install:
 # You are using pip version 19.0.3, however version 19.1.1 is available. You
