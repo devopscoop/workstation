@@ -56,9 +56,6 @@ RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_V
 RUN curl -sL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && chmod +x /usr/local/bin/terraform && rm /tmp/terraform.zip
 RUN curl -sL -o vert "https://github.com/Masterminds/vert/releases/download/${VERT_VERSION}/vert-${VERT_VERSION}-linux-amd64" && chmod +x vert
 
-# Terraform
-RUN mkdir -p /root/.terraform.d/plugins/linux_amd64
-
 WORKDIR /root/.terraform.d/plugins/linux_amd64
 
 RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider-sops/releases/download/v${TF_SOPS_VERSION}/terraform-provider-sops_${TF_SOPS_VERSION}_linux_amd64.zip" && unzip /tmp/tf_sops.zip && rm /tmp/tf_sops.zip
