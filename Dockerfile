@@ -18,6 +18,7 @@ ENV KUBECTL_VERSION=v1.18.3
 ENV SKAFFOLD_VERSION=v1.10.1
 ENV SOPS_VERSION=v3.5.0
 ENV TERRAFORM_VERSION=0.12.26
+ENV TF_SOPS_VERSION=0.5.1
 ENV VERT_VERSION=v0.1.0
 ENV YAMALE_VERSION=2.0.1
 ENV YAML_LINT_VERSION=1.23.0
@@ -55,6 +56,10 @@ RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_V
 RUN curl -sL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && chmod +x /usr/local/bin/terraform && rm /tmp/terraform.zip
 RUN curl -sL -o vert "https://github.com/Masterminds/vert/releases/download/${VERT_VERSION}/vert-${VERT_VERSION}-linux-amd64" && chmod +x vert
 RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" && chmod +x yq
+
+WORKDIR /root/.terraform.d/plugins/linux_amd64
+
+RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider-sops/releases/download/v${TF_SOPS_VERSION}/terraform-provider-sops_${TF_SOPS_VERSION}_linux_amd64.zip" && unzip /tmp/tf_sops.zip && rm /tmp/tf_sops.zip
 
 WORKDIR /root
 

@@ -20,3 +20,6 @@ source /usr/share/bash-completion/bash_completion
 source <(kubectl completion bash)
 alias k=kubectl
 complete -F __start_kubectl k
+
+# Terraform alias
+alias tf=terraform
