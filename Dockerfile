@@ -5,15 +5,16 @@ ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.0
 ENV EKSCTL_VERSION=0.20.0
 ENV FLUXCTL_VERSION=1.19.0
 ENV GOOGLE_CLOUD_SDK_VERSION=290.0.0
-ENV HELMFILE_VERSION=v0.118.3
+ENV HELM2_VERSION=v2.16.7
+ENV HELM3_VERSION=v3.2.1
+ENV HELMFILE_VERSION=v0.118.5
 ENV HELM_2TO3_VERSION=v0.5.1
 ENV HELM_DIFF_VERSION=v3.1.1
 ENV HELM_GIT_VERSION=v0.7.0
 ENV HELM_PUSH_VERSION=v0.8.1
 ENV HELM_SECRETS_VERSION=v2.0.2
-ENV HELM2_VERSION=v2.16.7
-ENV HELM3_VERSION=v3.2.1
-ENV K9S_VERSION=v0.20.1
+ENV ISTIOCTL_VERSION=1.6.0
+ENV K9S_VERSION=v0.20.2
 ENV KUBECTL_VERSION=v1.18.3
 ENV SKAFFOLD_VERSION=v1.10.1
 ENV SOPS_VERSION=v3.5.0
@@ -56,6 +57,7 @@ RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_V
 RUN curl -sL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && chmod +x /usr/local/bin/terraform && rm /tmp/terraform.zip
 RUN curl -sL -o vert "https://github.com/Masterminds/vert/releases/download/${VERT_VERSION}/vert-${VERT_VERSION}-linux-amd64" && chmod +x vert
 RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" && chmod +x yq
+RUN curl -sL https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-amd64.tar.gz | tar -xz
 
 WORKDIR /root/.terraform.d/plugins/linux_amd64
 
