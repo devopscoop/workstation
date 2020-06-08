@@ -1,18 +1,39 @@
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 image: docker:stable
+
 services:
   - docker:19.03.5-dind
+
 variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
+
+# The default "latest" image is the AWS image.
 build_aws:
   script:
-    - docker pull $CI_REGISTRY_IMAGE:aws || true
-    - docker build --build-arg CSP=aws --cache-from $CI_REGISTRY_IMAGE:aws --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:aws .
-    - docker push $CI_REGISTRY_IMAGE:aws
+    - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
+    - docker build \
+        --build-arg CSP \
+        --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" \
+        --tag "${CI_REGISTRY_IMAGE}:$CI_COMMIT_SHORT_SHA-${CSP}" \
+        --tag "${CI_REGISTRY_IMAGE}:${CSP}" \
+        --tag "${CI_REGISTRY_IMAGE}:latest" \
+        .
+    - docker push "${CI_REGISTRY_IMAGE}:${CSP}"
+  variables:
+    CSP: aws
+
 build_gcp:
   script:
-    - docker pull $CI_REGISTRY_IMAGE:gcp || true
-    - docker build --build-arg CSP=gcp --cache-from $CI_REGISTRY_IMAGE:gcp --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:gcp .
-    - docker push $CI_REGISTRY_IMAGE:gcp
+    - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
+    - docker build \
+        --build-arg CSP \
+        --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" \
+        --tag "${CI_REGISTRY_IMAGE}:$CI_COMMIT_SHORT_SHA-${CSP}" \
+        --tag "${CI_REGISTRY_IMAGE}:${CSP}" \
+        .
+    - docker push "${CI_REGISTRY_IMAGE}:${CSP}"
+  variables:
+    CSP: gcp
