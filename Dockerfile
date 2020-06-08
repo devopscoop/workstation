@@ -70,3 +70,5 @@ COPY .profile .
 # longer running .profile. Not sure why. This is a totally legit hack...
 RUN ln -s .profile .bashrc
 RUN ln -s .profile .bash_profile
+
+RUN rm -rf /tmp/*
