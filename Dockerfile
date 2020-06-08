@@ -21,25 +21,12 @@ ENV K9S_VERSION=v0.20.5
 ENV KUBECTL_VERSION=v1.18.3
 ENV SKAFFOLD_VERSION=v1.10.1
 ENV SOPS_VERSION=v3.5.0
-ENV TERRAFORM_VERSION=0.12.26
 ENV TF_SOPS_VERSION=0.5.1
 ENV YQ_VERSION=3.3.0
 
-# Adding this to fix this message during pip3 upgrade:
-# The scripts pyrsa-decrypt, pyrsa-decrypt-bigfile, pyrsa-encrypt,
-# pyrsa-encrypt-bigfile, pyrsa-keygen, pyrsa-priv2pub, pyrsa-sign and
-# pyrsa-verify are installed in '/root/.local/bin' which is not on PATH.
-# Consider adding this directory to PATH or, if you prefer to suppress this
-# warning, use --no-warn-script-location.
-ENV PATH "/root/.local/bin:${PATH}"
+RUN apk --no-cache add bash bash-completion ca-certificates curl gettext git gnupg groff jq openssh-client openssl terraform vim
 
-RUN apk --no-cache add bash bash-completion ca-certificates curl gettext git gnupg groff jq openssh-client openssl vim
-
-# Adding pip upgrade to fix this message during pip3 install:
-# You are using pip version 19.0.3, however version 19.1.1 is available. You
-# should consider upgrading via the 'pip install --upgrade pip' command.
-
-RUN if [[ "${CSP}" = "aws" ]]; then apk --no-cache add python3 && pip3 install --no-cache-dir --upgrade pip && pip3 install --no-cache-dir awscli; fi
+RUN if [[ "${CSP}" = "aws" ]]; then apk --no-cache add aws-cli; fi
 
 WORKDIR /usr/local/bin
 
@@ -52,7 +39,6 @@ RUN curl -sL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k
 RUN curl -sL -O "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && chmod +x kubectl
 RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKAFFOLD_VERSION}/skaffold-linux-amd64" && chmod +x skaffold
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
-RUN curl -sL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && chmod +x /usr/local/bin/terraform && rm /tmp/terraform.zip
 RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" && chmod +x yq
 RUN curl -sL "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-amd64.tar.gz" | tar -xz
 
