@@ -1,28 +1,28 @@
-FROM alpine:3.11.6
+FROM alpine:3.12.0
+
+# Adding Cloud Service Provider (CSP) argument to build separate images for AWS and GCP.
+ARG CSP
 
 # These version numbers were automatically generated with the update.sh script.
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.0
-ENV EKSCTL_VERSION=0.20.0
+ENV EKSCTL_VERSION=0.21.0
 ENV FLUXCTL_VERSION=1.19.0
 ENV GOOGLE_CLOUD_SDK_VERSION=290.0.0
 ENV HELM2_VERSION=v2.16.7
-ENV HELM3_VERSION=v3.2.1
-ENV HELMFILE_VERSION=v0.118.5
+ENV HELM3_VERSION=v3.2.3
+ENV HELMFILE_VERSION=v0.118.6
 ENV HELM_2TO3_VERSION=v0.5.1
 ENV HELM_DIFF_VERSION=v3.1.1
 ENV HELM_GIT_VERSION=v0.7.0
 ENV HELM_PUSH_VERSION=v0.8.1
 ENV HELM_SECRETS_VERSION=v2.0.2
-ENV ISTIOCTL_VERSION=1.6.0
-ENV K9S_VERSION=v0.20.2
+ENV ISTIOCTL_VERSION=1.6.1
+ENV K9S_VERSION=v0.20.5
 ENV KUBECTL_VERSION=v1.18.3
 ENV SKAFFOLD_VERSION=v1.10.1
 ENV SOPS_VERSION=v3.5.0
 ENV TERRAFORM_VERSION=0.12.26
 ENV TF_SOPS_VERSION=0.5.1
-ENV VERT_VERSION=v0.1.0
-ENV YAMALE_VERSION=2.0.1
-ENV YAML_LINT_VERSION=1.23.0
 ENV YQ_VERSION=3.3.0
 
 # Adding this to fix this message during pip3 upgrade:
@@ -33,19 +33,17 @@ ENV YQ_VERSION=3.3.0
 # warning, use --no-warn-script-location.
 ENV PATH "/root/.local/bin:${PATH}"
 
-RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl python3 vim
+RUN apk --no-cache add bash bash-completion ca-certificates curl gettext git gnupg groff jq openssh-client openssl vim
 
-# Adding this to fix this message during pip3 install:
+# Adding pip upgrade to fix this message during pip3 install:
 # You are using pip version 19.0.3, however version 19.1.1 is available. You
 # should consider upgrading via the 'pip install --upgrade pip' command.
-RUN pip3 install --no-cache-dir --upgrade pip
 
-RUN pip3 install --no-cache-dir awscli "yamale==$YAMALE_VERSION" "yamllint==$YAML_LINT_VERSION"
+RUN if [[ "${CSP}" = "aws" ]]; then apk --no-cache add python3 && pip3 install --no-cache-dir --upgrade pip && pip3 install --no-cache-dir awscli; fi
 
 WORKDIR /usr/local/bin
 
-RUN curl -sL -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator
-RUN curl -sL "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz && chmod +x eksctl
+RUN if [[ "${CSP}" = "aws" ]]; then curl -sL -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator && curl -sL "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz && chmod +x eksctl; fi
 RUN curl -sL -o fluxctl "https://github.com/fluxcd/flux/releases/download/${FLUXCTL_VERSION}/fluxctl_linux_amd64" && chmod +x fluxctl
 RUN curl -sL "https://get.helm.sh/helm-${HELM2_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm && mv linux-amd64/tiller . && rm -rf linux-amd64
 RUN curl -sL "https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm3 && rm -rf linux-amd64
@@ -55,9 +53,8 @@ RUN curl -sL -O "https://storage.googleapis.com/kubernetes-release/release/${KUB
 RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKAFFOLD_VERSION}/skaffold-linux-amd64" && chmod +x skaffold
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
 RUN curl -sL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && chmod +x /usr/local/bin/terraform && rm /tmp/terraform.zip
-RUN curl -sL -o vert "https://github.com/Masterminds/vert/releases/download/${VERT_VERSION}/vert-${VERT_VERSION}-linux-amd64" && chmod +x vert
 RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" && chmod +x yq
-RUN curl -sL https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-amd64.tar.gz | tar -xz
+RUN curl -sL "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-amd64.tar.gz" | tar -xz
 
 WORKDIR /root/.terraform.d/plugins/linux_amd64
 
@@ -65,7 +62,7 @@ RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider
 
 WORKDIR /root
 
-RUN curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" | tar -xz
+RUN if [[ "${CSP}" = "gcp" ]]; then curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" | tar -xz; fi
 
 # Helm 2
 RUN helm init --client-only

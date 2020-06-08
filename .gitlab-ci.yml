@@ -1,16 +1,18 @@
----
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-build:
-  image: docker:stable
-  services:
-    - docker:19.03.5-dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_DRIVER: overlay2
-  stage: build
+image: docker:stable
+services:
+  - docker:19.03.5-dind
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+build_aws:
   script:
-    - docker pull $CI_REGISTRY_IMAGE:latest || true
-    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:latest .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker pull $CI_REGISTRY_IMAGE:aws || true
+    - docker build --cache-from $CI_REGISTRY_IMAGE:aws --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:aws .
+    - docker push $CI_REGISTRY_IMAGE:aws
+build_gcp:
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:gcp || true
+    - docker build --cache-from $CI_REGISTRY_IMAGE:gcp --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:gcp .
+    - docker push $CI_REGISTRY_IMAGE:gcp
