@@ -9,10 +9,10 @@ variables:
 build_aws:
   script:
     - docker pull $CI_REGISTRY_IMAGE:aws || true
-    - docker build --cache-from $CI_REGISTRY_IMAGE:aws --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:aws .
+    - docker build --build-arg CSP=aws --cache-from $CI_REGISTRY_IMAGE:aws --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:aws .
     - docker push $CI_REGISTRY_IMAGE:aws
 build_gcp:
   script:
     - docker pull $CI_REGISTRY_IMAGE:gcp || true
-    - docker build --cache-from $CI_REGISTRY_IMAGE:gcp --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:gcp .
+    - docker build --build-arg CSP=gcp --cache-from $CI_REGISTRY_IMAGE:gcp --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:gcp .
     - docker push $CI_REGISTRY_IMAGE:gcp
