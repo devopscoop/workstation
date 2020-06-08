@@ -26,11 +26,8 @@ ENV YQ_VERSION=3.3.0
 
 RUN apk --no-cache add bash bash-completion ca-certificates curl gettext git gnupg groff jq openssh-client openssl terraform vim
 
-RUN if [[ "${CSP}" = "aws" ]]; then apk --no-cache add aws-cli; fi
-
 WORKDIR /usr/local/bin
 
-RUN if [[ "${CSP}" = "aws" ]]; then curl -sL -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator && curl -sL "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz && chmod +x eksctl; fi
 RUN curl -sL -o fluxctl "https://github.com/fluxcd/flux/releases/download/${FLUXCTL_VERSION}/fluxctl_linux_amd64" && chmod +x fluxctl
 RUN curl -sL "https://get.helm.sh/helm-${HELM2_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm && mv linux-amd64/tiller . && rm -rf linux-amd64
 RUN curl -sL "https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm3 && rm -rf linux-amd64
@@ -47,8 +44,6 @@ WORKDIR /root/.terraform.d/plugins/linux_amd64
 RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider-sops/releases/download/v${TF_SOPS_VERSION}/terraform-provider-sops_${TF_SOPS_VERSION}_linux_amd64.zip" && unzip /tmp/tf_sops.zip && rm /tmp/tf_sops.zip
 
 WORKDIR /root
-
-RUN if [[ "${CSP}" = "gcp" ]]; then curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" | tar -xz; fi
 
 # Helm 2
 RUN helm init --client-only
@@ -71,4 +66,15 @@ COPY .profile .
 RUN ln -s .profile .bashrc
 RUN ln -s .profile .bash_profile
 
-RUN rm -rf /tmp/*
+# Moving CSP-specific parts to the bottom so most layers are shared.
+RUN if [[ "${CSP}" = "aws" ]]; then apk --no-cache add aws-cli; fi
+WORKDIR /usr/local/bin
+RUN if [[ "${CSP}" = "aws" ]]; then curl -sL -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator && curl -sL "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz && chmod +x eksctl; fi
+WORKDIR /root
+RUN if [[ "${CSP}" = "gcp" ]]; then curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" | tar -xz; fi
+
+# Minor cleanup
+RUN rm -rvf /tmp/*
+
+# Ensuring that final WORKDIR is /root
+WORKDIR /root
