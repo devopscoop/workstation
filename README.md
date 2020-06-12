@@ -1,17 +1,38 @@
 # Workstation
 
-This image has a small collection of applications that are useful for managing Kubernetes clusters. It created to be used as:
+This image is a collection of applications that are useful for managing Kubernetes clusters. It was created because we wanted a consistent environment that could be used by humans and automated CI/CD workers (e.g., GitLab runner, Jenkins, etc.)
 
-* a CI/CD worker (e.g., Gitlab runner, Jenkins, etc.)
-* a common DevOps workstation, so everyone working with the cluster has the same environment
+Gone are the days of "it works on my computer"! If everyone who managed a cluster uses this image, then we're all using the same versions of the same tools.
 
-## CI/CD Worker
+To save a little space for now, the image has different versions for different cloud service providers, but we may merge all CSPs back into one image later if there's demand for it.
 
-To use it as a CI/CD worker with Gitlab, just set your pipeline image to this Docker image. For an example, see the `image:` line in here:
+## How to Use This Image
+
+### Fork This Repo
+
+Automatically running random code you found on the Intenret is not secure. You should fork this repo into your own GitLab group, which should trigger it to build an image. When the image is built, you should use your group's copy of the image. This will protect you in the event that someone accidentally breaks or maliciously changes this image in any way.
+
+1. Fork this repo.
+2. Clone repo on your computer.
+3. Set an upstream remote so you can pull changes when you wish:
+   ```
+   git remote add upstream https://gitlab.com/dedevsecops/workstation.git
+   ```
+4. Whenever you wish to update your fork, run this:
+   ```
+   git fetch upstream
+   git checkout master
+   git merge upstream/master
+   git push
+   ```
+
+### CI/CD Workers
+
+To use it as a CI/CD worker with GitLab, just set your pipeline image to this Docker image. For an example, see the `image:` line in here:
 
 https://gitlab.com/dedevsecops/k8s-eks-template/blob/master/.gitlab-ci.yml
 
-## Common Workstation
+### Humans
 
 This image is designed to be run using the [admin.sh](https://gitlab.com/dedevsecops/k8s-eks-template/blob/master/admin.sh) script in a Kubernetes repo that was based on [k8s-eks-template](https://gitlab.com/dedevsecops/k8s-eks-template). It requires an [env.sh](https://gitlab.com/dedevsecops/k8s-eks-template/blob/master/env.sh) and a kubeconfig.
 
