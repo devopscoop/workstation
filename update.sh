@@ -7,7 +7,8 @@
 cat << EOM
 EOM
 echo
-echo "ENV AWS_IAM_AUTHENTICATOR_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/latest) | sed 's/^v//') # Deprecated: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html"
+echo '# aws-iam-authenticator is deprecated: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html'
+echo "ENV AWS_IAM_AUTHENTICATOR_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/latest) | sed 's/^v//')"
 echo "ENV EKSCTL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/weaveworks/eksctl/releases/latest))"
 echo "ENV FLUXCTL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/fluxcd/flux/releases/latest))"
 echo "ENV GOOGLE_CLOUD_SDK_VERSION=$(curl -s https://cloud.google.com/sdk/docs/quickstart-linux | grep -oE 'google-cloud-sdk-[0-9]+\.[0-9]+\.[0-9]+-linux-x86_64.tar.gz' | grep -oE '[0-9]+\.[0-9]+\.[0-9]' | tail -n1)"

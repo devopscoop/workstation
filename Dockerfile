@@ -7,7 +7,8 @@ ARG CSP
 # them in the Dockerfile. Run the update.sh script to generate new versions,
 # and paste the output into the Dockerfile.'
 
-ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.1 # Deprecated: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
+# aws-iam-authenticator is deprecated: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
+ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.1
 ENV EKSCTL_VERSION=0.26.0
 ENV FLUXCTL_VERSION=1.20.2
 ENV GOOGLE_CLOUD_SDK_VERSION=308.0.0
