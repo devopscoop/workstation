@@ -29,7 +29,7 @@ ENV TFLINT_VERSION=v0.19.1
 ENV TFSEC_VERSION=v0.25.0
 ENV TF_SOPS_VERSION=0.5.2
 ENV TRIVY_VERSION=0.11.0
-ENV YQ_VERSION=3.2.3
+ENV YQ_VERSION=3.3.2
 
 # Don't install terraform with apk - version is slightly older than current release.
 RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl vim
