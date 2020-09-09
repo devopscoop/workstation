@@ -26,6 +26,7 @@ ENV SKAFFOLD_VERSION=v1.14.0
 ENV SOPS_VERSION=v3.6.0
 ENV TERRAFORM_VERSION=0.13.2
 ENV TFLINT_VERSION=v0.19.1
+ENV TFSEC_VERSION=v0.25.0
 ENV TF_SOPS_VERSION=0.5.2
 ENV TRIVY_VERSION=0.11.0
 ENV YQ_VERSION=3.2.3
@@ -46,6 +47,7 @@ RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKA
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
 RUN curl -sL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && rm /tmp/terraform.zip
 RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VERSION}/tflint_linux_amd64.zip" && unzip /tmp/tflint.zip && rm /tmp/tflint.zip
+RUN curl -sL -o tfsec "https://github.com/liamg/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-amd64" && chmod +x tfsec
 RUN curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" | tar -z -x trivy
 RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" && chmod +x yq
 
