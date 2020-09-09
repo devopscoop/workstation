@@ -8,12 +8,12 @@ ARG CSP
 # and paste the output into the Dockerfile.'
 # aws-iam-authenticator is deprecated: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.1
-ENV EKSCTL_VERSION=0.26.0
+ENV EKSCTL_VERSION=0.27.0
 ENV FLUXCTL_VERSION=1.20.2
-ENV GOOGLE_CLOUD_SDK_VERSION=308.0.0
+ENV GOOGLE_CLOUD_SDK_VERSION=309.0.0
 ENV HELM2_VERSION=v2.16.10
 ENV HELM3_VERSION=v3.3.1
-ENV HELMFILE_VERSION=v0.127.0
+ENV HELMFILE_VERSION=v0.128.1
 ENV HELM_2TO3_VERSION=v0.6.0
 ENV HELM_DIFF_VERSION=v3.1.3
 ENV HELM_GIT_VERSION=v0.8.1
@@ -21,13 +21,14 @@ ENV HELM_PUSH_VERSION=v0.8.1
 ENV HELM_SECRETS_VERSION=v2.0.2
 ENV ISTIOCTL_VERSION=1.7.0
 ENV K9S_VERSION=v0.21.7
-ENV KUBECTL_VERSION=v1.19.0
-ENV SKAFFOLD_VERSION=v1.13.2
+ENV KUBECTL_VERSION=v1.19.1
+ENV SKAFFOLD_VERSION=v1.14.0
 ENV SOPS_VERSION=v3.6.0
-ENV TERRAFORM_VERSION=0.13.1
+ENV TERRAFORM_VERSION=0.13.2
 ENV TFLINT_VERSION=v0.19.1
 ENV TF_SOPS_VERSION=0.5.2
-ENV YQ_VERSION=3.3.2
+ENV TRIVY_VERSION=0.11.0
+ENV YQ_VERSION=3.2.3
 
 # Don't install terraform with apk - version is slightly older than current release.
 RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl vim
@@ -45,6 +46,7 @@ RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKA
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
 RUN curl -sL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && unzip /tmp/terraform.zip && rm /tmp/terraform.zip
 RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VERSION}/tflint_linux_amd64.zip" && unzip /tmp/tflint.zip && rm /tmp/tflint.zip
+RUN curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" | tar -z -x trivy
 RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" && chmod +x yq
 
 # Terraform providers
