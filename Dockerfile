@@ -8,37 +8,39 @@ ARG CSP
 # and paste the output into the Dockerfile.'
 # aws-iam-authenticator is deprecated: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.1
-ENV EKSCTL_VERSION=0.27.0
+ENV EKSCTL_VERSION=0.28.1
+ENV DYFF_VERSION=v1.1.0
 ENV FLUXCTL_VERSION=1.20.2
-ENV GOOGLE_CLOUD_SDK_VERSION=309.0.0
-ENV HELM2_VERSION=v2.16.10
-ENV HELM3_VERSION=v3.3.1
-ENV HELMFILE_VERSION=v0.128.1
-ENV HELM_2TO3_VERSION=v0.6.0
+ENV GOOGLE_CLOUD_SDK_VERSION=311.0.0
+ENV HELM3_VERSION=v3.3.4
+ENV HELMFILE_VERSION=v0.130.0
 ENV HELM_DIFF_VERSION=v3.1.3
 ENV HELM_GIT_VERSION=v0.8.1
 ENV HELM_PUSH_VERSION=v0.8.1
 ENV HELM_SECRETS_VERSION=v2.0.2
-ENV ISTIOCTL_VERSION=1.7.0
-ENV K9S_VERSION=v0.21.7
-ENV KUBECTL_VERSION=v1.19.1
+ENV ISTIOCTL_VERSION=1.7.2
+ENV K9S_VERSION=v0.22.1
+ENV KUBECTL_VERSION=v1.19.2
 ENV SKAFFOLD_VERSION=v1.14.0
-ENV SOPS_VERSION=v3.6.0
-ENV TERRAFORM_VERSION=0.13.2
-ENV TFLINT_VERSION=v0.19.1
-ENV TFSEC_VERSION=v0.25.0
+ENV SOPS_VERSION=v3.6.1
+ENV TERRAFORM_VERSION=0.13.3
+ENV TFLINT_VERSION=v0.20.2
+ENV TFSEC_VERSION=v0.27.0
 ENV TF_SOPS_VERSION=0.5.2
 ENV TRIVY_VERSION=0.11.0
-ENV YQ_VERSION=3.3.2
+ENV YQ_VERSION=3.4.0
 
 # Don't install terraform with apk - version is slightly older than current release.
 RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl vim
 
 WORKDIR /usr/local/bin
 
+RUN curl -sL -o dyff "https://github.com/homeport/dyff/releases/download/${DYFF_VERSION}/dyff-linux-amd64" && chmod +x dyff
 RUN curl -sL -o fluxctl "https://github.com/fluxcd/flux/releases/download/${FLUXCTL_VERSION}/fluxctl_linux_amd64" && chmod +x fluxctl
-RUN curl -sL "https://get.helm.sh/helm-${HELM2_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm && mv linux-amd64/tiller . && rm -rf linux-amd64
-RUN curl -sL "https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm3 && rm -rf linux-amd64
+
+# This creates a symlink to helm called "helm3" for backwards compatibility.
+RUN curl -sL "https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm && ln -s helm helm3 && rm -rf linux-amd64
+
 RUN curl -sL -o helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64" && chmod +x helmfile
 RUN curl -sL "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-amd64.tar.gz" | tar -xz
 RUN curl -sL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz" | tar -xz
@@ -58,19 +60,11 @@ RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider
 
 WORKDIR /root
 
-# Helm 2
-RUN helm init --client-only
+# Helm plugins
 RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
 RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
 RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
 RUN helm plugin install https://github.com/zendesk/helm-secrets --version "${HELM_SECRETS_VERSION}"
-
-# Helm 3
-RUN helm3 plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
-RUN helm3 plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
-RUN helm3 plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
-RUN helm3 plugin install https://github.com/helm/helm-2to3 --version "${HELM_2TO3_VERSION}"
-RUN helm3 plugin install https://github.com/zendesk/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
 COPY .profile .
 
