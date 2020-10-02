@@ -50,8 +50,7 @@ RUN curl -sL -O "https://storage.googleapis.com/kubernetes-release/release/${KUB
 RUN curl -sL "https://github.com/instrumenta/kubeval/releases/download/${KUBEVAL_VERSION}/kubeval-linux-amd64.tar.gz" | tar -xz kubeval
 RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKAFFOLD_VERSION}/skaffold-linux-amd64" && chmod +x skaffold
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
-RUN curl -sL -o /tmp/tfenv.zip "https://github.com/tfutils/tfenv/archive/v${TFENV_VERSION}.zip" && unzip /tmp/tfenv.zip && mv "tfenv-${TFENV_VERSION}" "${HOME}/.tfenv" && ln -s ~/.tfenv/bin/* /usr/local/bin &&
- rm /tmp/tfenv.zip
+RUN curl -sL -o /tmp/tfenv.zip "https://github.com/tfutils/tfenv/archive/v${TFENV_VERSION}.zip" && unzip /tmp/tfenv.zip && mv "tfenv-${TFENV_VERSION}" "${HOME}/.tfenv" && ln -s ~/.tfenv/bin/* /usr/local/bin && rm /tmp/tfenv.zip
 RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VERSION}/tflint_linux_amd64.zip" && unzip /tmp/tflint.zip && rm /tmp/tflint.zip
 RUN curl -sL -o tfsec "https://github.com/liamg/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-amd64" && chmod +x tfsec
 RUN curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" | tar -xz trivy
