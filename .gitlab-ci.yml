@@ -4,7 +4,7 @@ before_script:
 image: docker:stable
 
 services:
-  - docker:19.03.5-dind
+  - docker:stable-dind
 
 variables:
   DOCKER_HOST: tcp://docker:2375
@@ -18,6 +18,9 @@ build_aws:
     - docker push "${CI_REGISTRY_IMAGE}"
   variables:
     CSP: aws
+  only:
+    refs:
+      - master
 
 build_gcp:
   script:
@@ -26,3 +29,6 @@ build_gcp:
     - docker push "${CI_REGISTRY_IMAGE}"
   variables:
     CSP: gcp
+  only:
+    refs:
+      - master
