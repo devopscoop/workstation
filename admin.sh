@@ -83,6 +83,8 @@ if [[ -z $WORKSTATION_IMAGE ]]; then
   export WORKSTATION_IMAGE='registry.gitlab.com/dedevsecops/workstation:latest'
 fi
 
+docker pull -q $WORKSTATION_IMAGE 1>/dev/null
+
 # .gnupg has to be rw for some reason... should look into why and try to make it ro.
 eval docker run \
   ${ports} \
