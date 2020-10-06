@@ -4,8 +4,10 @@ PATH='/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin'
 
 this_file="$(readlink -m "${BASH_SOURCE[0]}")"
 current_file='https://gitlab.com/dedevsecops/workstation/-/raw/master/admin.sh'
+this_file_sum="$(md5sum "${this_file}" | cut -d' ' -f1)"
+current_file_sum="$(md5sum <(curl -m 5 -sL "${current_file}") | cut -d' ' -f1)"
 
-if [[ "$(md5sum "${this_file}")" != "$(md5sum <(curl -m 5 -sL "${current_file}"))" ]]; then
+if [[ "${this_file_sum}" != "${current_file_sum}" ]]; then
   cat <<EOF >&2
 
 WARNING: This file has diverged from the current file! Probable causes are:
