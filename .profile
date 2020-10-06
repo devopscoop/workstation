@@ -6,7 +6,7 @@ if [[ -f /mnt/env.sh ]]; then
   export PS1="\u@${CLUSTER_NAME}:\w\$ "
 fi
 
-gpg-agent --daemon --enable-ssh-support
+gpg-agent --daemon --enable-ssh-support 1>/dev/null
 
 # These lines were copied from the .bashrc after manually running Google Cloud DSK install.sh:
 if [ -f '/root/google-cloud-sdk/path.bash.inc' ]; then . '/root/google-cloud-sdk/path.bash.inc'; fi
