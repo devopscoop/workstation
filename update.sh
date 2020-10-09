@@ -19,6 +19,7 @@ echo "ENV HELM_SECRETS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_
 echo "ENV ISTIOCTL_VERSION=$(curl -sL https://github.com/istio/istio/releases | grep -o 'releases/[0-9]*.[0-9]*.[0-9]*/' | sort --version-sort | tail -1 | awk -F'/' '{ print $2}')"
 echo "ENV K9S_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/derailed/k9s/releases/latest))"
 echo "ENV KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
+echo "ENV KUBENT_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/doitintl/kube-no-trouble/releases/latest))"
 echo "ENV KUBEVAL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/instrumenta/kubeval/releases/latest))"
 echo "ENV SKAFFOLD_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/GoogleContainerTools/skaffold/releases/latest))"
 echo "ENV SOPS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mozilla/sops/releases/latest))"

@@ -7,11 +7,11 @@ ARG CSP
 # them in the Dockerfile. Run the update.sh script to generate new versions,
 # and paste the output into the Dockerfile.'
 # aws-iam-authenticator is deprecated: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
-ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.1
+ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.2
 ENV DYFF_VERSION=v1.1.0
-ENV EKSCTL_VERSION=0.29.0
+ENV EKSCTL_VERSION=0.29.2
 ENV FLUXCTL_VERSION=1.21.0
-ENV GOOGLE_CLOUD_SDK_VERSION=312.0.0
+ENV GOOGLE_CLOUD_SDK_VERSION=313.0.1
 ENV HELM3_VERSION=v3.3.4
 ENV HELMFILE_VERSION=v0.130.1
 ENV HELM_DIFF_VERSION=v3.1.3
@@ -21,13 +21,14 @@ ENV HELM_SECRETS_VERSION=v2.0.2
 ENV ISTIOCTL_VERSION=1.7.3
 ENV K9S_VERSION=v0.22.1
 ENV KUBECTL_VERSION=v1.19.2
+ENV KUBENT_VERSION=0.3.2
 ENV KUBEVAL_VERSION=0.15.0
 ENV SKAFFOLD_VERSION=v1.15.0
 ENV SOPS_VERSION=v3.6.1
 ENV TERRAFORM_VERSION=0.13.4
 ENV TFENV_VERSION=2.0.0
 ENV TFLINT_VERSION=v0.20.2
-ENV TFSEC_VERSION=v0.27.0
+ENV TFSEC_VERSION=0.30.1
 ENV TF_SOPS_VERSION=0.5.2
 ENV TRIVY_VERSION=0.11.0
 ENV YQ_VERSION=3.4.0
@@ -47,6 +48,7 @@ RUN curl -sL -o helmfile "https://github.com/roboll/helmfile/releases/download/$
 RUN curl -sL "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-amd64.tar.gz" | tar -xz
 RUN curl -sL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz" | tar -xz
 RUN curl -sL -O "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && chmod +x kubectl
+RUN curl -sL "https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-amd64.tar.gz" | tar -xz
 RUN curl -sL "https://github.com/instrumenta/kubeval/releases/download/${KUBEVAL_VERSION}/kubeval-linux-amd64.tar.gz" | tar -xz kubeval
 RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKAFFOLD_VERSION}/skaffold-linux-amd64" && chmod +x skaffold
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
