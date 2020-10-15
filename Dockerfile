@@ -84,7 +84,7 @@ RUN ln -s .profile .bash_profile
 RUN if [[ "${CSP}" = "aws" ]]; then apk --no-cache add aws-cli; fi
 WORKDIR /usr/local/bin
 RUN if [[ "${CSP}" = "aws" ]]; then curl -sL -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator && curl -sL "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz && chmod +x eksctl; fi
-RUN if [[ "${CSP}" = "azure" ]]; then apk add --no-cache gcc libffi-dev musl-dev openssl-dev py3-pip py3-pynacl python3-dev && pip install azure-cli fi
+RUN if [[ "${CSP}" = "azure" ]]; then apk add --no-cache gcc libffi-dev musl-dev openssl-dev py3-pip py3-pynacl python3-dev && pip install azure-cli; fi
 WORKDIR /root
 RUN if [[ "${CSP}" = "gcp" ]]; then curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" | tar -xz; fi
 
