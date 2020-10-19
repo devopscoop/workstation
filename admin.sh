@@ -18,7 +18,7 @@ Usage:
 
   -h  Help
 
-  -i  Image. Default: registry.gitlab.com/dedevsecops/workstation:latest
+  -i  Image. Default: registry.gitlab.com/dedevsecops/workstation:aws
 
   -n  Namespace: sets the Kubernetes namespace.
 
@@ -56,7 +56,7 @@ while getopts :c:hi:n:p: option; do
 done
 
 if [[ -z $WORKSTATION_IMAGE ]]; then
-  export WORKSTATION_IMAGE='registry.gitlab.com/dedevsecops/workstation:latest'
+  export WORKSTATION_IMAGE='registry.gitlab.com/dedevsecops/workstation:aws'
 fi
 
 docker pull -q $WORKSTATION_IMAGE 1>/dev/null

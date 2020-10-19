@@ -10,11 +10,10 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
 
-# The default "latest" image is the AWS image.
 build_aws:
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:latest" .
+    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
     - docker push "${CI_REGISTRY_IMAGE}"
   variables:
     CSP: aws
@@ -25,7 +24,7 @@ build_aws:
 build_azure:
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:latest" .
+    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
     - docker push "${CI_REGISTRY_IMAGE}"
   variables:
     CSP: azure
