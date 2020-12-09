@@ -59,7 +59,7 @@ if [[ -z $WORKSTATION_IMAGE ]]; then
   export WORKSTATION_IMAGE='registry.gitlab.com/dedevsecops/workstation:aws'
 fi
 
-docker pull -q $WORKSTATION_IMAGE 1>/dev/null
+docker pull $WORKSTATION_IMAGE 1>/dev/null
 
 # .gnupg has to be rw for some reason... should look into why and try to make it ro.
 eval docker run \
@@ -73,7 +73,7 @@ eval docker run \
   -v "${HOME}/.aws":/root/.aws:ro \
   -v "${HOME}/.gitconfig":/root/.gitconfig:ro \
   -v "${HOME}/.gnupg":/root/.gnupg:rw \
-  -v "${HOME}/.kube":/root/.kube:ro \
+  -v "${HOME}/.kube":/root/.kube:rw \
   -v "${HOME}/.ssh":/root/.ssh:ro \
   -v "${HOME}/.vimrc":/root/.vimrc:ro \
   -v "${PWD}":/mnt \
