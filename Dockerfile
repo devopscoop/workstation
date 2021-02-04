@@ -1,4 +1,4 @@
-FROM alpine:3.12.0
+FROM alpine:3.13.1
 
 # Adding Cloud Service Provider (CSP) argument to build separate images for AWS and GCP.
 ARG CSP
@@ -8,12 +8,13 @@ ARG CSP
 # and paste the output into the Dockerfile.'
 # aws-iam-authenticator is deprecated: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.2
-ENV DYFF_VERSION=v1.1.4
-ENV EKSCTL_VERSION=0.36.0
+ENV DYFF_VERSION=v1.2.0
+ENV EKSCTL_VERSION=0.37.0
+ENV FLUXCD_VERSION=0.7.6
 ENV FLUXCTL_VERSION=1.21.1
-ENV GOOGLE_CLOUD_SDK_VERSION=323.0.0
-ENV HELM3_VERSION=v3.5.0
-ENV HELMFILE_VERSION=v0.137.0
+ENV GOOGLE_CLOUD_SDK_VERSION=326.0.0
+ENV HELM3_VERSION=v3.5.2
+ENV HELMFILE_VERSION=v0.138.3
 ENV HELM_DIFF_VERSION=v3.1.3
 ENV HELM_GIT_VERSION=v0.10.0
 ENV HELM_PUSH_VERSION=v0.9.0
@@ -23,15 +24,15 @@ ENV K9S_VERSION=v0.24.2
 ENV KUBECTL_VERSION=v1.20.2
 ENV KUBENT_VERSION=0.3.2
 ENV KUBEVAL_VERSION=0.15.0
-ENV SKAFFOLD_VERSION=v1.17.2
+ENV SKAFFOLD_VERSION=v1.19.0
 ENV SOPS_VERSION=v3.6.1
-ENV TERRAFORM_VERSION=0.14.4
-ENV TFENV_VERSION=2.0.0
-ENV TFLINT_VERSION=v0.23.1
-ENV TFSEC_VERSION=v0.36.13
-ENV TF_SOPS_VERSION=0.5.3
+ENV TERRAFORM_VERSION=0.14.6
+ENV TFENV_VERSION=2.1.0
+ENV TFLINT_VERSION=v0.24.1
+ENV TFSEC_VERSION=v0.37.2
+ENV TF_SOPS_VERSION=0.6.0
 ENV TRIVY_VERSION=0.15.0
-ENV YQ_VERSION=v4.4.0
+ENV YQ_VERSION=3.4.1
 
 # Don't install terraform with apk - version is slightly older than current release.
 RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl vim
@@ -40,6 +41,7 @@ WORKDIR /usr/local/bin
 
 RUN curl -sL -o dyff "https://github.com/homeport/dyff/releases/download/${DYFF_VERSION}/dyff-linux-amd64" && chmod +x dyff
 RUN curl -sL -o fluxctl "https://github.com/fluxcd/flux/releases/download/${FLUXCTL_VERSION}/fluxctl_linux_amd64" && chmod +x fluxctl
+RUN curl -sL "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_amd64.tar.gz" | tar -zx flux && chmod +x flux
 
 # This creates a symlink to helm called "helm3" for backwards compatibility.
 RUN curl -sL "https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm && ln -s helm helm3 && rm -rf linux-amd64
