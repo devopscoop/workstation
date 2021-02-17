@@ -4,8 +4,10 @@
 # Docker image. You can copy and paste the output into the Dockerfile to update
 # everything.
 
-echo '# aws-iam-authenticator is deprecated: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html'
+# aws-iam-authenticator is deprecated, but we still use it in some places. See:
+# https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
 echo "ENV AWS_IAM_AUTHENTICATOR_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/latest) | sed 's/^v//')"
+
 echo "ENV DYFF_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/homeport/dyff/releases/latest))"
 echo "ENV EKSCTL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/weaveworks/eksctl/releases/latest))"
 echo "ENV FLUXCD_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/fluxcd/flux2/releases/latest) | sed 's/^v//')"
@@ -22,12 +24,16 @@ echo "ENV K9S_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' htt
 echo "ENV KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
 echo "ENV KUBENT_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/doitintl/kube-no-trouble/releases/latest))"
 echo "ENV KUBEVAL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/instrumenta/kubeval/releases/latest))"
+echo "ENV KUSTOMIZE_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/kubernetes-sigs/kustomize/releases/latest))"
 echo "ENV SKAFFOLD_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/GoogleContainerTools/skaffold/releases/latest))"
 echo "ENV SOPS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mozilla/sops/releases/latest))"
 echo "ENV TERRAFORM_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/hashicorp/terraform/releases/latest) | sed 's/^v//')"
 echo "ENV TFENV_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/tfutils/tfenv/releases/latest) | sed 's/^v//')"
 echo "ENV TFLINT_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/terraform-linters/tflint/releases/latest))"
-echo "ENV TFSEC_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/liamg/tfsec/releases/latest))"
+echo "ENV TFSEC_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/tfsec/tfsec/releases/latest))"
 echo "ENV TF_SOPS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/carlpett/terraform-provider-sops/releases/latest) | sed 's/^v//')"
 echo "ENV TRIVY_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/aquasecurity/trivy/releases/latest) | sed 's/^v//')"
+
+# This is hardcoded to the old version of yq. We are not ready to upgrade to yq v4 yet.
+echo "ENV YQ3_VERSION=3.4.1"
 echo "ENV YQ_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mikefarah/yq/releases/latest))"
