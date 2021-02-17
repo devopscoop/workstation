@@ -53,7 +53,7 @@ RUN curl -sL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k
 RUN curl -sL -O "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && chmod +x kubectl
 RUN curl -sL "https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-amd64.tar.gz" | tar -xz
 RUN curl -sL "https://github.com/instrumenta/kubeval/releases/download/${KUBEVAL_VERSION}/kubeval-linux-amd64.tar.gz" | tar -xz kubeval
-RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomiz/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" | tar -xz kustomize
+RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" | tar -xz
 RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKAFFOLD_VERSION}/skaffold-linux-amd64" && chmod +x skaffold
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
 RUN curl -sL -o /tmp/tfenv.zip "https://github.com/tfutils/tfenv/archive/v${TFENV_VERSION}.zip" && unzip /tmp/tfenv.zip && mv "tfenv-${TFENV_VERSION}" "${HOME}/.tfenv" && ln -s ~/.tfenv/bin/* /usr/local/bin && rm /tmp/tfenv.zip
