@@ -33,7 +33,7 @@ ENV TFSEC_VERSION=v0.38.3
 ENV TF_SOPS_VERSION=0.6.0
 ENV TRIVY_VERSION=0.16.0
 ENV YQ3_VERSION=3.4.1
-ENV YQ_VERSION=v4.5.1
+ENV YQ4_VERSION=v4.5.1
 
 # Don't install terraform with apk - version is slightly older than current release.
 RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl vim
@@ -61,6 +61,7 @@ RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/rel
 RUN curl -sL -o tfsec "https://github.com/tfsec/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-amd64" && chmod +x tfsec
 RUN curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" | tar -xz trivy
 RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ3_VERSION}/yq_linux_amd64" && chmod +x yq
+RUN curl -sL -o yq4 "https://github.com/mikefarah/yq/releases/download/${YQ4_VERSION}/yq_linux_amd64" && chmod +x yq4
 
 # Terraform setup
 RUN tfenv install "${TERRAFORM_VERSION}" && tfenv use "${TERRAFORM_VERSION}"

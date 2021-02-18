@@ -36,4 +36,4 @@ echo "ENV TRIVY_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' h
 
 # This is hardcoded to the old version of yq. We are not ready to upgrade to yq v4 yet.
 echo "ENV YQ3_VERSION=3.4.1"
-echo "ENV YQ_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mikefarah/yq/releases/latest))"
+echo "ENV YQ4_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mikefarah/yq/releases/latest))"
