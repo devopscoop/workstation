@@ -13,7 +13,7 @@ variables:
 build_aws:
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
+    - docker buildx build --platform linux/amd64,linux/arm64 --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
     - docker push "${CI_REGISTRY_IMAGE}"
   variables:
     CSP: aws
@@ -24,7 +24,7 @@ build_aws:
 build_azure:
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
+    - docker buildx build --platform linux/amd64,linux/arm64 --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
     - docker push "${CI_REGISTRY_IMAGE}"
   variables:
     CSP: azure
@@ -35,7 +35,7 @@ build_azure:
 build_gcp:
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
+    - docker buildx build --platform linux/amd64,linux/arm64 --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
     - docker push "${CI_REGISTRY_IMAGE}"
   variables:
     CSP: gcp
