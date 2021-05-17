@@ -11,15 +11,15 @@ variables:
   # DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
   BUILDX_VERSION: "v0.5.1"
+  #PLATFORMS: "linux/amd64,linux/arm64"
+  PLATFORMS: "linux/amd64"
 
 build_aws:
   script:
     - mkdir -p ~/.docker/cli-plugins && wget -O ~/.docker/cli-plugins/docker-buildx "https://github.com/docker/buildx/releases/download/${BUILDX_VERSION}/buildx-${BUILDX_VERSION}.linux-amd64" && chmod +x ~/.docker/cli-plugins/docker-buildx
-    - docker context create mybuilder
-#    - docker buildx create --name mybuilder --use
     - docker buildx create mybuilder --use
     - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker buildx build --platform linux/amd64,linux/arm64 --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
+    - docker buildx build --platform "${PLATFORMS}" --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
     - docker push "${CI_REGISTRY_IMAGE}"
   variables:
     CSP: aws
@@ -29,7 +29,6 @@ build_aws:
 
 #build_azure:
 #  script:
-#    - apk add --no-cache git
 #    - docker buildx create --name mybuilder --use
 #    - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
 #    - docker buildx build --platform linux/amd64,linux/arm64 --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
@@ -42,7 +41,6 @@ build_aws:
 #
 #build_gcp:
 #  script:
-#    - apk add --no-cache git
 #    - docker buildx create --name mybuilder --use
 #    - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
 #    - docker buildx build --platform linux/amd64,linux/arm64 --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
