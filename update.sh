@@ -27,7 +27,7 @@ echo "ENV KUBEVAL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}'
 
 # Kustomize has multiple products in a single repo, so the "latest" release cannot be trusted.
 #echo "ENV KUSTOMIZE_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/kubernetes-sigs/kustomize/releases/latest))"
-echo "ENV KUSTOMIZE_VERSION=manually look it up here https://github.com/kubernetes-sigs/kustomize/releases/latest"
+echo "ENV KUSTOMIZE_VERSION=manually look it up here https://github.com/kubernetes-sigs/kustomize/releases"
 
 echo "ENV SKAFFOLD_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/GoogleContainerTools/skaffold/releases/latest))"
 echo "ENV SOPS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mozilla/sops/releases/latest))"
