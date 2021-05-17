@@ -15,6 +15,7 @@ variables:
 build_aws:
   script:
     - mkdir -p ~/.docker/cli-plugins && wget -O ~/.docker/cli-plugins/docker-buildx "https://github.com/docker/buildx/releases/download/${BUILDX_VERSION}/buildx-${BUILDX_VERSION}.linux-amd64" && chmod +x ~/.docker/cli-plugins/docker-buildx
+    - docker context create mybuilder
     - docker buildx create --name mybuilder --use
     - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
     - docker buildx build --platform linux/amd64,linux/arm64 --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
