@@ -78,6 +78,9 @@ RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_G
 RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
 RUN helm plugin install https://github.com/zendesk/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
+# Trivy templates
+RUN curl -sL -o gitlab.tpl "https://raw.githubusercontent.com/aquasecurity/trivy/v${TRIVY_VERSION}/contrib/gitlab.tpl"
+
 COPY .profile .
 
 # Behavior changed between Alpine 3.10.3 and 3.11.2, and the image was no
