@@ -26,6 +26,7 @@ ENV KUBEVAL_VERSION=v0.16.1
 ENV KUSTOMIZE_VERSION=v4.3.0
 ENV SKAFFOLD_VERSION=v1.32.0
 ENV SOPS_VERSION=v3.7.1
+ENV STERN_VERSION=1.20.1
 ENV TERRAFORM_VERSION=1.0.7
 ENV TFENV_VERSION=2.2.2
 ENV TFLINT_VERSION=v0.32.1
@@ -40,9 +41,9 @@ RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext 
 
 WORKDIR /usr/local/bin
 
-RUN curl -sL "https://github.com/homeport/dyff/releases/download/v${DYFF_VERSION}/dyff_${DYFF_VERSION}_linux_amd64.tar.gz" | tar -zx dyff
+RUN curl -sL "https://github.com/homeport/dyff/releases/download/v${DYFF_VERSION}/dyff_${DYFF_VERSION}_linux_amd64.tar.gz" | tar -xz dyff
 RUN curl -sL -o fluxctl "https://github.com/fluxcd/flux/releases/download/${FLUXCTL_VERSION}/fluxctl_linux_amd64" && chmod +x fluxctl
-RUN curl -sL "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_amd64.tar.gz" | tar -zx flux && chmod +x flux
+RUN curl -sL "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_amd64.tar.gz" | tar -xz flux && chmod +x flux
 
 # This creates a symlink to helm called "helm3" for backwards compatibility.
 RUN curl -sL "https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm && ln -s helm helm3 && rm -rf linux-amd64
@@ -56,6 +57,7 @@ RUN curl -sL "https://github.com/instrumenta/kubeval/releases/download/${KUBEVAL
 RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" | tar -xz
 RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKAFFOLD_VERSION}/skaffold-linux-amd64" && chmod +x skaffold
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
+RUN curl -sL "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz" | tar -xz --strip-components 1 "stern_${STERN_VERSION}_linux_amd64/stern"
 RUN curl -sL -o /tmp/tfenv.zip "https://github.com/tfutils/tfenv/archive/v${TFENV_VERSION}.zip" && unzip /tmp/tfenv.zip && mv "tfenv-${TFENV_VERSION}" "${HOME}/.tfenv" && ln -s ~/.tfenv/bin/* /usr/local/bin && rm /tmp/tfenv.zip
 RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VERSION}/tflint_linux_amd64.zip" && unzip /tmp/tflint.zip && rm /tmp/tflint.zip
 RUN curl -sL -o tfsec "https://github.com/tfsec/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-amd64" && chmod +x tfsec

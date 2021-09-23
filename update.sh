@@ -31,6 +31,7 @@ echo "ENV KUSTOMIZE_VERSION=manually look it up here https://github.com/kubernet
 
 echo "ENV SKAFFOLD_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/GoogleContainerTools/skaffold/releases/latest))"
 echo "ENV SOPS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mozilla/sops/releases/latest))"
+echo "ENV STERN_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/stern/stern/releases/latest) | sed 's/^v//')"
 echo "ENV TERRAFORM_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/hashicorp/terraform/releases/latest) | sed 's/^v//')"
 echo "ENV TFENV_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/tfutils/tfenv/releases/latest) | sed 's/^v//')"
 echo "ENV TFLINT_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/terraform-linters/tflint/releases/latest))"
