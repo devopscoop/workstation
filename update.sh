@@ -35,7 +35,7 @@ echo "ENV STERN_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' h
 echo "ENV TERRAFORM_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/hashicorp/terraform/releases/latest) | sed 's/^v//')"
 echo "ENV TFENV_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/tfutils/tfenv/releases/latest) | sed 's/^v//')"
 echo "ENV TFLINT_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/terraform-linters/tflint/releases/latest))"
-echo "ENV TFSEC_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/tfsec/tfsec/releases/latest))"
+echo "ENV TFSEC_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/aquasecurity/tfsec/releases/latest))"
 echo "ENV TF_SOPS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/carlpett/terraform-provider-sops/releases/latest) | sed 's/^v//')"
 echo "ENV TRIVY_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/aquasecurity/trivy/releases/latest) | sed 's/^v//')"
 
