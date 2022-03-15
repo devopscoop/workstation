@@ -8,36 +8,38 @@ ARG CSP
 # and paste the output into the Dockerfile.'
 ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.5
 ENV DYFF_VERSION=1.5.1
-ENV EKSCTL_VERSION=v0.86.0
+ENV EKSCTL_VERSION=v0.87.0
 ENV FLUXCD_VERSION=0.27.3
 ENV FLUXCTL_VERSION=1.24.3
-ENV GOOGLE_CLOUD_SDK_VERSION=376.0.0
-ENV HELM3_VERSION=v3.8.0
-ENV HELMFILE_VERSION=v0.143.0
+ENV GOOGLE_CLOUD_SDK_VERSION=377.0.0
+ENV HELM3_VERSION=v3.8.1
+ENV HELMFILE_VERSION=v0.143.1
 ENV HELM_DIFF_VERSION=v3.4.2
 ENV HELM_GIT_VERSION=v0.11.1
-ENV HELM_PUSH_VERSION=v0.10.2
 ENV HELM_SECRETS_VERSION=v2.0.3
-ENV ISTIOCTL_VERSION=1.13.1
-ENV K9S_VERSION=v0.25.18
+ENV ISTIOCTL_VERSION=1.13.2
+
+# Commenting k9s out because it has CVE-2021-43816 as of version v0.25.18.
+#ENV K9S_VERSION=v0.25.18
+
 ENV KUBECTL_VERSION=v1.23.4
 ENV KUBENT_VERSION=0.5.1
 ENV KUBEVAL_VERSION=v0.16.1
 ENV KUSTOMIZE_VERSION=v4.5.2
 ENV SKAFFOLD_VERSION=v1.36.1
-ENV SOPS_VERSION=v3.7.1
+ENV SOPS_VERSION=v3.7.2
 ENV STERN_VERSION=1.21.0
 ENV TERRAFORM_VERSION=1.1.7
 ENV TFENV_VERSION=2.2.3
 ENV TFLINT_VERSION=v0.34.1
 ENV TFSEC_VERSION=v1.8.0
 ENV TF_SOPS_VERSION=0.6.3
+ENV TRIVY_VERSION=0.24.2
 
-# I'm making this match the current version used by Harbor.
-ENV TRIVY_VERSION=0.20.1
-
+# This is hardcoded to the last v3 version of yq. We are not ready to upgrade to yq v4 yet.
 ENV YQ3_VERSION=3.4.1
-ENV YQ4_VERSION=v4.21.1
+
+ENV YQ4_VERSION=v4.22.1
 
 # Don't install terraform with apk - version is slightly older than current release.
 RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl vim
@@ -53,7 +55,10 @@ RUN curl -sL "https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz" | ta
 
 RUN curl -sL -o helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64" && chmod +x helmfile
 RUN curl -sL "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-amd64.tar.gz" | tar -xz
-RUN curl -sL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz" | tar -xz
+
+# Commenting k9s out because it has CVE-2021-43816 as of version v0.25.18.
+#RUN curl -sL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz" | tar -xz
+
 RUN curl -sL -O "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && chmod +x kubectl
 RUN curl -sL "https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-amd64.tar.gz" | tar -xz
 RUN curl -sL "https://github.com/instrumenta/kubeval/releases/download/${KUBEVAL_VERSION}/kubeval-linux-amd64.tar.gz" | tar -xz kubeval
@@ -80,7 +85,6 @@ WORKDIR /root
 # Helm plugins
 RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
 RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
-RUN helm plugin install https://github.com/chartmuseum/helm-push --version "${HELM_PUSH_VERSION}"
 RUN helm plugin install https://github.com/zendesk/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
 # Trivy templates
