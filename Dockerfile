@@ -61,8 +61,8 @@ RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kus
 RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKAFFOLD_VERSION}/skaffold-linux-amd64" && chmod +x skaffold
 RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
 RUN curl -sL "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz" | tar -xz stern
-RUN curl -sL -o /tmp/tfenv.zip "https://github.com/tfutils/tfenv/archive/v${TFENV_VERSION}.zip" && unzip /tmp/tfenv.zip && mv "tfenv-${TFENV_VERSION}" "${HOME}/.tfenv" && ln -s ~/.tfenv/bin/* /usr/local/bin && rm /tmp/tfenv.zip
-RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VERSION}/tflint_linux_amd64.zip" && unzip /tmp/tflint.zip && rm /tmp/tflint.zip
+RUN curl -sL -o /tmp/tfenv.zip "https://github.com/tfutils/tfenv/archive/v${TFENV_VERSION}.zip" && unzip -q /tmp/tfenv.zip && mv "tfenv-${TFENV_VERSION}" "${HOME}/.tfenv" && ln -s ~/.tfenv/bin/* /usr/local/bin && rm /tmp/tfenv.zip
+RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VERSION}/tflint_linux_amd64.zip" && unzip -q /tmp/tflint.zip && rm /tmp/tflint.zip
 RUN curl -sL -o tfsec "https://github.com/tfsec/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-amd64" && chmod +x tfsec
 RUN curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" | tar -xz trivy
 RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ3_VERSION}/yq_linux_amd64" && chmod +x yq
@@ -73,7 +73,7 @@ RUN tfenv install "${TERRAFORM_VERSION}" && tfenv use "${TERRAFORM_VERSION}"
 
 WORKDIR /root/.terraform.d/plugins/linux_amd64
 
-RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider-sops/releases/download/v${TF_SOPS_VERSION}/terraform-provider-sops_${TF_SOPS_VERSION}_linux_amd64.zip" && unzip /tmp/tf_sops.zip && rm /tmp/tf_sops.zip
+RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider-sops/releases/download/v${TF_SOPS_VERSION}/terraform-provider-sops_${TF_SOPS_VERSION}_linux_amd64.zip" && unzip -q /tmp/tf_sops.zip && rm /tmp/tf_sops.zip
 
 WORKDIR /root
 
@@ -93,7 +93,7 @@ RUN ln -s .profile .bashrc
 RUN ln -s .profile .bash_profile
 
 # Moving CSP-specific parts to the bottom so most layers are shared.
-RUN if [[ "${CSP}" = "aws" ]]; then curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install; fi
+RUN if [[ "${CSP}" = "aws" ]]; then curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip" -o "awscliv2.zip" && unzip -q awscliv2.zip && ./aws/install; fi
 WORKDIR /usr/local/bin
 RUN if [[ "${CSP}" = "aws" ]]; then curl -sL -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_amd64" && chmod +x aws-iam-authenticator && curl -sL "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz && chmod +x eksctl; fi
 RUN if [[ "${CSP}" = "azure" ]]; then apk add --no-cache gcc libffi-dev musl-dev openssl-dev py3-pip py3-pynacl python3-dev && pip install --upgrade pip && pip install azure-cli; fi
