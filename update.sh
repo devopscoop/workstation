@@ -4,6 +4,8 @@
 # Docker image. You can copy and paste the output into the Dockerfile to update
 # everything.
 
+echo "ENV AWS_CLI_VERSION=manually look it up here https://github.com/aws/aws-cli/tags"
+
 # aws-iam-authenticator is deprecated, but we still use it in some places. See:
 # https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
 echo "ENV AWS_IAM_AUTHENTICATOR_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/latest) | sed 's/^v//')"
