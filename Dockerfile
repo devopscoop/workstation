@@ -98,7 +98,6 @@ COPY .profile .
 
 # Behavior changed between Alpine 3.10.3 and 3.11.2, and the image was no
 # longer running .profile. Not sure why. This is a totally legit hack...
-RUN ln -s .profile .bashrc
 RUN ln -s .profile .bash_profile
 
 # Moving CSP-specific parts to the bottom so most layers are shared.
