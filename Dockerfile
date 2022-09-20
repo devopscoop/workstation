@@ -1,5 +1,7 @@
 FROM ubuntu:22.04
 
+SHELL ["/bin/bash", "-c"]
+
 # Adding Cloud Service Provider (CSP) argument to build separate images for AWS and GCP.
 ARG CSP
 
