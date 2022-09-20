@@ -4,6 +4,10 @@
 # Set working directory
 cd /root
 
+# Need gcompat to run this version of awscli on Alpine/musl
+# Need groff for "aws help" commands to work
+apk add --no-cache gcompat groff
+
 # See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip" -o "awscliv2.zip"
 unzip -q awscliv2.zip

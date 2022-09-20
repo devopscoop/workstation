@@ -1,12 +1,15 @@
-FROM ubuntu:22.04
+FROM alpine:3.16.2
 
 # Adding Cloud Service Provider (CSP) argument to build separate images for AWS and GCP.
 ARG CSP
 
 # ========== Pasted output from update.sh below ==========
 
-# You can find latest versions here: https://github.com/aws/aws-cli/tags
-ENV AWS_CLI_VERSION=2.7.33
+# AWS CLI versions newer than 2.1.39 don't work on Alpine Linux. See:
+# https://github.com/aws/aws-cli/issues/4685
+# Once that issue is resolved, you can find latest versions here:
+# https://github.com/aws/aws-cli/tags
+ENV AWS_CLI_VERSION=2.1.39
 
 # aws-iam-authenticator is deprecated, but we still use it in some places. See:
 # https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
@@ -48,8 +51,8 @@ ENV YQ4_VERSION=v4.27.5
 
 # ========== Pasted output from update.sh above ==========
 
-RUN apt update
-RUN apt install -y bash-completion ca-certificates curl docker gettext git gnupg groff jq
+# Don't install terraform with apk - version is slightly older than current release.
+RUN apk --no-cache add bash bash-completion ca-certificates curl docker gettext git gnupg groff jq openssh-client openssl vim
 
 WORKDIR /usr/local/bin
 
@@ -109,8 +112,7 @@ COPY aws.sh /tmp/
 RUN if [[ "${CSP}" = "aws" ]]; then /tmp/aws.sh; fi 
 
 # Azure specific section
-COPY azure.sh /tmp/
-RUN if [[ "${CSP}" = "azure" ]]; then /tmp/azure.sh; fi
+RUN if [[ "${CSP}" = "azure" ]]; then apk add --no-cache gcc libffi-dev musl-dev openssl-dev py3-pip py3-pynacl python3-dev && pip install --upgrade pip && pip install azure-cli; fi
 
 # GCP specific section
 RUN if [[ "${CSP}" = "gcp" ]]; then curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" | tar -xz; fi
