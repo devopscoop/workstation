@@ -49,7 +49,7 @@ ENV YQ4_VERSION=v4.27.5
 # ========== Pasted output from update.sh above ==========
 
 RUN apt update
-RUN apt install -y bash-completion ca-certificates curl docker gettext git gnupg groff jq
+RUN apt install -y bash-completion ca-certificates curl docker gettext git gnupg groff jq unzip
 
 WORKDIR /usr/local/bin
 
