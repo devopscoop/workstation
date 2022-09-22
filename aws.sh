@@ -1,6 +1,8 @@
 
 #!/bin/bash
 
+set -x
+
 # Set working directory
 cd /root
 
