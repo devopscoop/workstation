@@ -51,7 +51,7 @@ ENV YQ4_VERSION=v4.27.5
 # ========== Pasted output from update.sh above ==========
 
 RUN apt update
-RUN apt install -y bash-completion ca-certificates curl gettext git gnupg groff jq unzip
+RUN apt install -y bash-completion ca-certificates curl gettext git gnupg groff jq unzip wget
 
 # Install Docker
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
