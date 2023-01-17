@@ -7,46 +7,49 @@ ARG CSP
 
 # ========== Pasted output from update.sh below ==========
 
-# You can find latest versions here: https://github.com/aws/aws-cli/tags
-ENV AWS_CLI_VERSION=2.7.33
+# AWS CLI versions newer than 2.1.39 don't work on Alpine Linux. See:
+# https://github.com/aws/aws-cli/issues/4685
+# Once that issue is resolved, you can find latest versions here:
+# https://github.com/aws/aws-cli/tags
+ENV AWS_CLI_VERSION=2.9.15
 
 # aws-iam-authenticator is deprecated, but we still use it in some places. See:
 # https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
-ENV AWS_IAM_AUTHENTICATOR_VERSION=0.5.9
+ENV AWS_IAM_AUTHENTICATOR_VERSION=0.6.2
 
-ENV DYFF_VERSION=1.5.5
-ENV EKSCTL_VERSION=v0.111.0
-ENV FLUXCD_VERSION=0.34.0
+ENV DYFF_VERSION=1.5.6
+ENV EKSCTL_VERSION=v0.125.0
+ENV FLUXCD_VERSION=0.38.3
 ENV FLUXCTL_VERSION=1.25.4
-ENV GOOGLE_CLOUD_SDK_VERSION=402.0.0
-ENV HELM3_VERSION=v3.10.0-rc.1
+ENV GOOGLE_CLOUD_SDK_VERSION=413.0.0
+ENV HELM3_VERSION=v3.11.0-rc.2
 ENV HELMFILE_VERSION=v0.144.0
-ENV HELM_DIFF_VERSION=v3.5.0
-ENV HELM_GIT_VERSION=v0.11.2
+ENV HELM_DIFF_VERSION=v3.6.0
+ENV HELM_GIT_VERSION=v0.14.2
 ENV HELM_SECRETS_VERSION=v2.0.3
-ENV ISTIOCTL_VERSION=1.15.0
-ENV K9S_VERSION=v0.26.3
-ENV KUBECTL_VERSION=v1.25.1
-ENV KUBENT_VERSION=0.5.1
+ENV ISTIOCTL_VERSION=1.16.1
+ENV K9S_VERSION=v0.26.7
+ENV KUBECTL_VERSION=v1.26.0
+ENV KUBENT_VERSION=0.7.0
 ENV KUBEVAL_VERSION=v0.16.1
 
 # Kustomize has multiple products in a single repo, so the "latest" release cannot be trusted.
 ENV KUSTOMIZE_VERSION=v4.5.7
 
-ENV SKAFFOLD_VERSION=v1.39.2
+ENV SKAFFOLD_VERSION=v2.0.4
 ENV SOPS_VERSION=v3.7.3
-ENV STERN_VERSION=1.21.0
-ENV TERRAFORM_VERSION=1.2.9
+ENV STERN_VERSION=1.22.0
+ENV TERRAFORM_VERSION=1.3.7
 ENV TFENV_VERSION=3.0.0
-ENV TFLINT_VERSION=v0.40.0
-ENV TFSEC_VERSION=v1.27.6
-ENV TF_SOPS_VERSION=0.7.1
-ENV TRIVY_VERSION=0.32.0
+ENV TFLINT_VERSION=v0.44.1
+ENV TFSEC_VERSION=v1.28.1
+ENV TF_SOPS_VERSION=0.7.2
+ENV TRIVY_VERSION=0.36.1
 
 # We have both yq v3 and v4 in this image. This is hardcoded to the last v3 version of yq, which we still use.
 ENV YQ3_VERSION=3.4.1
 # ...and this is the v4 version.
-ENV YQ4_VERSION=v4.27.5
+ENV YQ4_VERSION=v4.30.8
 
 # ========== Pasted output from update.sh above ==========
 

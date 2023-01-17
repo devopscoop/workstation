@@ -11,7 +11,7 @@ cat <<EOF
 # https://github.com/aws/aws-cli/issues/4685
 # Once that issue is resolved, you can find latest versions here:
 # https://github.com/aws/aws-cli/tags
-ENV AWS_CLI_VERSION=2.1.39
+ENV AWS_CLI_VERSION=2.9.15
 
 # aws-iam-authenticator is deprecated, but we still use it in some places. See:
 # https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
