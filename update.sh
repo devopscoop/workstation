@@ -7,11 +7,9 @@
 cat <<EOF
 # ========== Pasted output from update.sh below ==========
 
-# AWS CLI versions newer than 2.1.39 don't work on Alpine Linux. See:
-# https://github.com/aws/aws-cli/issues/4685
-# Once that issue is resolved, you can find latest versions here:
-# https://github.com/aws/aws-cli/tags
-ENV AWS_CLI_VERSION=2.9.15
+# AWS doesn't know how to release things to GitHub properly, you'll have to
+# manually find the latest tag here: https://github.com/aws/aws-cli/tags
+ENV AWS_CLI_VERSION=2.9.16
 
 # aws-iam-authenticator is deprecated, but we still use it in some places. See:
 # https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
@@ -33,8 +31,10 @@ ENV KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/
 ENV KUBENT_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/doitintl/kube-no-trouble/releases/latest))
 ENV KUBEVAL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/instrumenta/kubeval/releases/latest))
 
-# Kustomize has multiple products in a single repo, so the "latest" release cannot be trusted.
-ENV KUSTOMIZE_VERSION=manually look it up here https://github.com/kubernetes-sigs/kustomize/releases
+# Kustomize has multiple products in a single repo, so the "latest" release
+# cannot be trusted. You'll have to manually look up the version here:
+# https://github.com/kubernetes-sigs/kustomize/releases
+ENV KUSTOMIZE_VERSION=v4.5.7
 
 ENV SKAFFOLD_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/GoogleContainerTools/skaffold/releases/latest))
 ENV SOPS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mozilla/sops/releases/latest))

@@ -1,16 +1,14 @@
 # Workstation
 
-This image is a collection of applications that are useful for managing Kubernetes clusters. It was created because we wanted a consistent environment that could be used by humans and automated CI/CD workers (e.g., GitLab runner, Jenkins, etc.)
+This image is a collection of tools that are useful for CI/CD pipelines for Kubernetes clusters. Some pipeline jobs need git and kubectl; others need helm and kubectl; and others need git, terraform, and AWS CLI. Rather than maintaining a fleet of images with every permutation of tools needed for each particular job, we just have this one, big image with everything in it. A complete DevOps workstation in an image.
 
-Gone are the days of "it works on my computer"! If everyone who managed a cluster uses this image, then we're all using the same versions of the same tools.
-
-To save a little space for now, the image has different versions for different cloud service providers, but we may merge all CSPs back into one image later if there's demand for it.
+To save a little space, the image has different versions for different cloud service providers (CSPs), but we may merge all CSP tools back into one image later if there's demand for it.
 
 ## How to Use This Image
 
 ### Fork This Repo
 
-Automatically running random code you found on the Intenret is not secure. You should fork this repo into your own GitLab group, which should trigger it to build an image. When the image is built, you should use your group's copy of the image. This will protect you in the event that someone accidentally breaks or maliciously changes this image in any way.
+Running random code you found on the Internet is not safe. You should fork this repo, review it yourself, and review again whenever you fetch upstream.
 
 1. Fork this repo.
 2. Clone repo on your computer.
@@ -34,9 +32,7 @@ https://gitlab.com/dedevsecops/k8s-eks-template/blob/master/.gitlab-ci.yml
 
 ### Humans
 
-This image is designed to be run using the [admin.sh](https://gitlab.com/dedevsecops/k8s-eks-template/blob/master/admin.sh) script in a Kubernetes repo that was based on [k8s-eks-template](https://gitlab.com/dedevsecops/k8s-eks-template). It requires an [env.sh](https://gitlab.com/dedevsecops/k8s-eks-template/blob/master/env.sh) and a kubeconfig.
-
-However, it can be run without all of that stuff if you just want to run a Docker container that has a bunch of useful tools in it. You could run it like this:
-```bash
+You can run this image on your local computer like this:
+```
 docker run -it --rm registry.gitlab.com/dedevsecops/workstation bash
 ```
