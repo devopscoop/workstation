@@ -79,7 +79,7 @@ WORKDIR /root
 # Helm plugins
 RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
 RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
-RUN helm plugin install https://github.com/zendesk/helm-secrets --version "${HELM_SECRETS_VERSION}"
+RUN helm plugin install https://github.com/jkroepke/helm-secrets --version "${HELM_SECRETS_VERSION}"
 
 # Trivy templates
 RUN curl -sL -o gitlab.tpl "https://raw.githubusercontent.com/aquasecurity/trivy/v${TRIVY_VERSION}/contrib/gitlab.tpl"
