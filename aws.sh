@@ -1,7 +1,7 @@
-
 #!/bin/bash
 
-set -x
+# https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuxo pipefail
 
 # Set working directory
 cd /root

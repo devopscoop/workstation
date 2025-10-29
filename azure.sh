@@ -3,7 +3,8 @@
 # https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt
 # Removed "sudo" from commands, because we are already root.
 
-set -x
+# https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuxo pipefail
 
 apt-get update
 apt-get install -y ca-certificates curl apt-transport-https lsb-release gnupg
