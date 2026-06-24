@@ -24,8 +24,5 @@ unzip -q awscliv2.zip
 # Set new working directory for the following tools
 cd /usr/local/bin
 
-curl -sL -o aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_${AWS_IAM_AUTHENTICATOR_VERSION}_linux_${ARCH}"
-chmod +x aws-iam-authenticator
-
 curl -sL "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_${ARCH}.tar.gz" | tar -xz
 chmod +x eksctl

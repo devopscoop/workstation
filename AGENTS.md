@@ -39,12 +39,12 @@ Two versions require **manual lookup** (noted in both `update.sh` and the Docker
 
 CSP layers are isolated at the bottom of the Dockerfile so all preceding layers are shared across variants:
 
-| Build arg      | Script     | Tools added                            |
-| -------------- | ---------- | -------------------------------------- |
-| `aws`          | `aws.sh`   | AWS CLI, aws-iam-authenticator, eksctl |
-| `azure`        | `azure.sh` | Azure CLI (via Microsoft apt repo)     |
-| `gcp`          | *(inline)* | Google Cloud SDK tarball               |
-| `digitalocean` | *(inline)* | doctl (DigitalOcean CLI)               |
+| Build arg      | Script     | Tools added                        |
+| -------------- | ---------- | ---------------------------------- |
+| `aws`          | `aws.sh`   | AWS CLI, eksctl                    |
+| `azure`        | `azure.sh` | Azure CLI (via Microsoft apt repo) |
+| `gcp`          | *(inline)* | Google Cloud SDK tarball           |
+| `digitalocean` | *(inline)* | doctl (DigitalOcean CLI)           |
 
 If no `CSP` arg is passed, none of those `RUN if [[ "${CSP}" = ... ]]` blocks execute — you get the base image only.
 
