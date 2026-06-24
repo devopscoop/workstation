@@ -77,9 +77,12 @@ RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider
 WORKDIR /root
 
 # Helm plugins
-RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}"
-RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}"
-RUN helm plugin install https://github.com/jkroepke/helm-secrets --version "${HELM_SECRETS_VERSION}"
+# Helm 4 made `helm plugin install --verify` default to true; these community
+# plugins ship no signatures, so installs fail with "plugin source does not
+# support verification" unless we opt out with --verify=false.
+RUN helm plugin install https://github.com/databus23/helm-diff --version "${HELM_DIFF_VERSION}" --verify=false
+RUN helm plugin install https://github.com/aslafy-z/helm-git --version "${HELM_GIT_VERSION}" --verify=false
+RUN helm plugin install https://github.com/jkroepke/helm-secrets --version "${HELM_SECRETS_VERSION}" --verify=false
 
 # Trivy templates
 RUN curl -sL -o gitlab.tpl "https://raw.githubusercontent.com/aquasecurity/trivy/v${TRIVY_VERSION}/contrib/gitlab.tpl"
