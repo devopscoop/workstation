@@ -11,6 +11,7 @@ cat <<EOF
 # manually find the latest tag here: https://github.com/aws/aws-cli/tags
 ENV AWS_CLI_VERSION=2.26.1
 
+ENV DOCTL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/digitalocean/doctl/releases/latest) | sed 's/^v//')
 ENV DYFF_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/homeport/dyff/releases/latest) | sed 's/^v//')
 ENV EKSCTL_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/eksctl-io/eksctl/releases/latest))
 ENV FLUXCD_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/fluxcd/flux2/releases/latest) | sed 's/^v//')

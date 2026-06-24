@@ -1,9 +1,17 @@
-FROM ubuntu:26.04
+FROM ubuntu:26.10
 
 SHELL ["/bin/bash", "-c"]
 
-# Adding Cloud Service Provider (CSP) argument to build separate images for AWS and GCP.
+# Adding Cloud Service Provider (CSP) argument to build separate images per CSP
+# (aws, azure, gcp, digitalocean). Leave unset for the base image.
 ARG CSP
+
+# BuildKit auto-populates TARGETARCH (amd64, arm64, …) from --platform. Re-export
+# it as an ENV with an amd64 fallback so (a) every arch-specific download below
+# can just reference ${TARGETARCH}, (b) the CSP scripts inherit it, and (c)
+# classic builders that don't set it (e.g. GitLab's docker build) still work.
+ARG TARGETARCH
+ENV TARGETARCH=${TARGETARCH:-amd64}
 
 # ========== Pasted output from update.sh below ==========
 
@@ -11,6 +19,7 @@ ARG CSP
 # manually find the latest tag here: https://github.com/aws/aws-cli/tags
 ENV AWS_CLI_VERSION=2.35.11
 
+ENV DOCTL_VERSION=1.162.0
 ENV DYFF_VERSION=1.12.0
 ENV EKSCTL_VERSION=v0.227.0
 ENV FLUXCD_VERSION=2.8.8
@@ -56,26 +65,28 @@ RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plug
 
 WORKDIR /usr/local/bin
 
-RUN curl -sL "https://github.com/homeport/dyff/releases/download/v${DYFF_VERSION}/dyff_${DYFF_VERSION}_linux_amd64.tar.gz" | tar -xz dyff
-RUN curl -sL "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_amd64.tar.gz" | tar -xz flux && chmod +x flux
-RUN curl -sL "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz" | tar -xz && mv linux-amd64/helm ./helm && rm -rf linux-amd64
-RUN curl -sL -o helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64" && chmod +x helmfile
-RUN curl -sL "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-amd64.tar.gz" | tar -xz
-RUN curl -sL -O "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && chmod +x kubectl
-RUN curl -sL "https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-amd64.tar.gz" | tar -xz
-RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" | tar -xz
-RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKAFFOLD_VERSION}/skaffold-linux-amd64" && chmod +x skaffold
-RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" && chmod +x sops
-RUN curl -sL "https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz" | tar -xz tofu
-RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VERSION}/tflint_linux_amd64.zip" && unzip -q /tmp/tflint.zip && rm /tmp/tflint.zip
-RUN curl -sL -o tfsec "https://github.com/tfsec/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-amd64" && chmod +x tfsec
-RUN curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" | tar -xz trivy
-RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" && chmod +x yq
-RUN curl -sL "https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-linux-x64.tar.gz" | tar -xz opencode && chmod +x opencode
+RUN curl -sL "https://github.com/homeport/dyff/releases/download/v${DYFF_VERSION}/dyff_${DYFF_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz dyff
+RUN curl -sL "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz flux && chmod +x flux
+RUN curl -sL "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz" | tar -xz && mv "linux-${TARGETARCH}/helm" ./helm && rm -rf "linux-${TARGETARCH}"
+RUN curl -sL -o helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_${TARGETARCH}" && chmod +x helmfile
+RUN curl -sL "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-${TARGETARCH}.tar.gz" | tar -xz
+RUN curl -sL -O "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl" && chmod +x kubectl
+RUN curl -sL "https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz" | tar -xz
+RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz
+RUN curl -sL -o skaffold "https://storage.googleapis.com/skaffold/releases/${SKAFFOLD_VERSION}/skaffold-linux-${TARGETARCH}" && chmod +x skaffold
+RUN curl -sL -o sops "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.${TARGETARCH}" && chmod +x sops
+RUN curl -sL "https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz tofu
+RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VERSION}/tflint_linux_${TARGETARCH}.zip" && unzip -q /tmp/tflint.zip && rm /tmp/tflint.zip
+RUN curl -sL -o tfsec "https://github.com/tfsec/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-${TARGETARCH}" && chmod +x tfsec
+# Trivy's asset arch tokens are 64bit/ARM64, not Go-style.
+RUN ARCH="$([ "${TARGETARCH}" = arm64 ] && echo ARM64 || echo 64bit)" && curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz" | tar -xz trivy
+RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${TARGETARCH}" && chmod +x yq
+# opencode's asset arch tokens are x64/arm64.
+RUN ARCH="$([ "${TARGETARCH}" = arm64 ] && echo arm64 || echo x64)" && curl -sL "https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-linux-${ARCH}.tar.gz" | tar -xz opencode && chmod +x opencode
 
-WORKDIR /root/.terraform.d/plugins/linux_amd64
+WORKDIR /root/.terraform.d/plugins/linux_${TARGETARCH}
 
-RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider-sops/releases/download/v${TF_SOPS_VERSION}/terraform-provider-sops_${TF_SOPS_VERSION}_linux_amd64.zip" && unzip -q /tmp/tf_sops.zip && rm /tmp/tf_sops.zip
+RUN curl -sL -o /tmp/tf_sops.zip "https://github.com/carlpett/terraform-provider-sops/releases/download/v${TF_SOPS_VERSION}/terraform-provider-sops_${TF_SOPS_VERSION}_linux_${TARGETARCH}.zip" && unzip -q /tmp/tf_sops.zip && rm /tmp/tf_sops.zip
 
 WORKDIR /root
 
@@ -114,7 +125,13 @@ COPY azure.sh /tmp/
 RUN if [[ "${CSP}" = "azure" ]]; then /tmp/azure.sh; fi
 
 # GCP specific section
-RUN if [[ "${CSP}" = "gcp" ]]; then curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" | tar -xz; fi
+# gcloud's tarball arch tokens are x86_64/arm (arm == arm64).
+RUN if [[ "${CSP}" = "gcp" ]]; then ARCH="$([ "${TARGETARCH}" = arm64 ] && echo arm || echo x86_64)" && curl -sL "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GOOGLE_CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz" | tar -xz; fi
+
+# DigitalOcean specific section
+# doctl ships as a single binary, so no separate script is needed; drop it
+# straight into /usr/local/bin to land on PATH like every other tool.
+RUN if [[ "${CSP}" = "digitalocean" ]]; then curl -sL "https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-${TARGETARCH}.tar.gz" | tar -xz -C /usr/local/bin doctl; fi
 
 # Minor cleanup
 RUN rm -rvf /tmp/*

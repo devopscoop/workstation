@@ -51,6 +51,13 @@ jobs:
     # Ceiling so a hung QEMU arm64 build can't burn the 6h default. Raise if
     # emulated builds legitimately run longer.
     timeout-minutes: 45
+    strategy:
+      # One CSP's build failing shouldn't cancel the others.
+      fail-fast: false
+      matrix:
+        # "" is the base image (no cloud CLI); the rest layer one on top via the
+        # CSP build arg. Keep in sync with the Dockerfile and .gitlab-ci.yml.
+        csp: ["", aws, azure, gcp, digitalocean]
     outputs:
       image_tag: ${{ steps.flux-tag.outputs.image_tag }}
     permissions:
@@ -79,16 +86,27 @@ jobs:
       # The commit timestamp is reused as SOURCE_DATE_EPOCH for reproducible builds.
       - name: Compute image tag and build timestamp
         id: flux-tag
+        env:
+          CSP: ${{ matrix.csp }}
         run: |
           TIMESTAMP="$(git log -1 --pretty=%ct)"
           SHA="$(git rev-parse --short=7 HEAD)"
+          # CSP="" (base) gets no suffix; otherwise -aws, -azure, etc. The
+          # metadata-action flavor below appends this to every tag, so image_tag
+          # stays unsuffixed here to avoid doubling it; the pushed tag is
+          # build-<sha>-<ts><suffix>.
           echo "image_tag=build-${SHA}-${TIMESTAMP}" | tee -a "$GITHUB_OUTPUT"
+          echo "suffix=${CSP:+-$CSP}" | tee -a "$GITHUB_OUTPUT"
           echo "TIMESTAMP=${TIMESTAMP}" >> "$GITHUB_ENV"
 
       - uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
         id: meta
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # Append the CSP to every tag (empty for the base image) so the matrix
+          # variants publish to distinct tags instead of clobbering each other.
+          flavor: |
+            suffix=${{ steps.flux-tag.outputs.suffix }},onlatest=true
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -127,14 +145,20 @@ jobs:
         with:
           context: .
           file: Dockerfile
+          # Selects the CSP-specific layers at the bottom of the Dockerfile;
+          # empty builds the base image.
+          build-args: |
+            CSP=${{ matrix.csp }}
           # Build arm64 only on real pushes; QEMU emulation is slow and PRs only
           # need to prove the image still builds.
           platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
+          # Cache is per-CSP (suffixed like the tags) so variants don't poison
+          # each other's layers.
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache${{ steps.flux-tag.outputs.suffix }}
           # Only write cache on pushes; PRs aren't authorized to write to GHCR.
-          cache-to: ${{ github.event_name != 'pull_request' && format('type=registry,ref={0}/{1}:buildcache,mode=max', env.REGISTRY, env.IMAGE_NAME) || '' }}
+          cache-to: ${{ github.event_name != 'pull_request' && format('type=registry,ref={0}/{1}:buildcache{2},mode=max', env.REGISTRY, env.IMAGE_NAME, steps.flux-tag.outputs.suffix) || '' }}
           # Attestations only matter for images we keep, so skip them on PRs.
           provenance: ${{ github.event_name != 'pull_request' && 'mode=max' || 'false' }}
           sbom: ${{ github.event_name != 'pull_request' }}
