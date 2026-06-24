@@ -9,34 +9,34 @@ ARG CSP
 
 # AWS doesn't know how to release things to GitHub properly, you'll have to
 # manually find the latest tag here: https://github.com/aws/aws-cli/tags
-ENV AWS_CLI_VERSION=2.26.1
+ENV AWS_CLI_VERSION=2.35.11
 
-ENV DYFF_VERSION=1.10.1
-ENV EKSCTL_VERSION=v0.207.0
-ENV FLUXCD_VERSION=2.5.1
-ENV GOOGLE_CLOUD_SDK_VERSION=517.0.0
-ENV HELM_VERSION=v3.17.3
-ENV HELMFILE_VERSION=v0.171.0
-ENV HELM_DIFF_VERSION=v3.11.0
-ENV HELM_GIT_VERSION=v1.3.0
-ENV HELM_SECRETS_VERSION=v4.6.3
-ENV ISTIOCTL_VERSION=1.25.1
+ENV DYFF_VERSION=1.12.0
+ENV EKSCTL_VERSION=v0.227.0
+ENV FLUXCD_VERSION=2.8.8
+ENV GOOGLE_CLOUD_SDK_VERSION=
+ENV HELM_VERSION=v4.2.2
+ENV HELMFILE_VERSION=v1.6.0
+ENV HELM_DIFF_VERSION=v3.15.10
+ENV HELM_GIT_VERSION=v1.5.2
+ENV HELM_SECRETS_VERSION=v4.7.7
+ENV ISTIOCTL_VERSION=1.30.1
 ENV KUBECTL_VERSION=v1.31.0
 ENV KUBENT_VERSION=0.7.3
 
 # Kustomize has multiple products in a single repo, so the "latest" release
 # cannot be trusted. You'll have to manually look up the version here:
 # https://github.com/kubernetes-sigs/kustomize/releases
-ENV KUSTOMIZE_VERSION=v5.6.0
+ENV KUSTOMIZE_VERSION=v5.8.1
 
-ENV SKAFFOLD_VERSION=v2.15.0
-ENV SOPS_VERSION=v3.10.1
-ENV OPENTOFU_VERSION=1.9.0
-ENV TFLINT_VERSION=v0.56.0
-ENV TFSEC_VERSION=v1.28.13
-ENV TF_SOPS_VERSION=1.2.0
-ENV TRIVY_VERSION=0.61.0
-ENV YQ_VERSION=v4.45.1
+ENV SKAFFOLD_VERSION=v2.22.0
+ENV SOPS_VERSION=v3.13.1
+ENV OPENTOFU_VERSION=1.12.3
+ENV TFLINT_VERSION=v0.63.1
+ENV TFSEC_VERSION=v1.28.14
+ENV TF_SOPS_VERSION=1.4.1
+ENV TRIVY_VERSION=0.71.2
+ENV YQ_VERSION=v4.53.3
 
 # ========== Pasted output from update.sh above ==========
 
@@ -95,7 +95,7 @@ RUN ln -s .profile .bash_profile
 # AWS specific section
 # It got big enough to need it's own script. This is probably an anti-pattern...
 COPY aws.sh /tmp/
-RUN if [[ "${CSP}" = "aws" ]]; then /tmp/aws.sh; fi 
+RUN if [[ "${CSP}" = "aws" ]]; then /tmp/aws.sh; fi
 
 # Azure specific section
 COPY azure.sh /tmp/
