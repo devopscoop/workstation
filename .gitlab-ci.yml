@@ -19,8 +19,11 @@ before_script:
   # exercised once PLATFORMS includes an arch other than the runner's own.
   - docker run --privileged --rm tonistiigi/binfmt --install all
   # Multi-platform builds require the docker-container driver, not the default
-  # docker driver baked into the daemon.
-  - docker buildx create --use --name builder --driver docker-container --bootstrap
+  # docker driver baked into the daemon. That driver can't read dind's TLS
+  # settings straight from the environment, so capture them in a named context
+  # and point the builder at it (see the error buildx prints without this).
+  - docker context create tls-environment
+  - docker buildx create --use --name builder --driver docker-container --bootstrap tls-environment
 
 # Shared build/push for every CSP variant. Each job below just sets $CSP, which
 # selects the matching layer at the bottom of the Dockerfile and suffixes the
