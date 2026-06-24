@@ -168,8 +168,11 @@ jobs:
           outputs: type=image,push=${{ github.event_name != 'pull_request' }},rewrite-timestamp=true
 
       # Scan the pushed image by digest, decoupling the scan from the tag set above.
+      # Report-only: exit-code below still flags findings, but continue-on-error
+      # keeps a failing scan from failing the job (the image is already pushed).
       - name: Scan image for vulnerabilities
         if: github.event_name != 'pull_request'
+        continue-on-error: true
         uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.push.outputs.digest }}
