@@ -1,50 +1,63 @@
-before_script:
-  - echo "$CI_REGISTRY_PASSWORD" | docker login --password-stdin -u "$CI_REGISTRY_USER" "$CI_REGISTRY"
+# Build the CSP image variants with buildx so the pipeline is multi-arch capable.
+# Builds are pinned to amd64 for now (see PLATFORMS); the QEMU + buildx setup
+# below already supports more, so going multi-arch is a one-variable change.
 
-image: docker:20
+image: docker:27
 
 services:
-  - docker:20-dind
+  - docker:27-dind
 
 variables:
   DOCKER_TLS_CERTDIR: "/certs"
+  # Architectures to build. Pinned to amd64 for now; to build multi-arch just add
+  # more here, e.g. linux/amd64,linux/arm64 (QEMU is registered in before_script).
+  PLATFORMS: linux/amd64
+
+before_script:
+  - echo "$CI_REGISTRY_PASSWORD" | docker login --password-stdin -u "$CI_REGISTRY_USER" "$CI_REGISTRY"
+  # Register QEMU emulators so the builder can produce non-native arches. Only
+  # exercised once PLATFORMS includes an arch other than the runner's own.
+  - docker run --privileged --rm tonistiigi/binfmt --install all
+  # Multi-platform builds require the docker-container driver, not the default
+  # docker driver baked into the daemon.
+  - docker buildx create --use --name builder --driver docker-container --bootstrap
+
+# Shared build/push for every CSP variant. Each job below just sets $CSP, which
+# selects the matching layer at the bottom of the Dockerfile and suffixes the
+# tags. buildx pushes directly (multi-platform images can't be loaded locally),
+# and layer cache is kept per-CSP in a dedicated registry tag so variants don't
+# poison each other.
+.build:
+  script:
+    - >
+      docker buildx build
+      --build-arg CSP
+      --platform "${PLATFORMS}"
+      --cache-from "type=registry,ref=${CI_REGISTRY_IMAGE}:buildcache-${CSP}"
+      --cache-to "type=registry,ref=${CI_REGISTRY_IMAGE}:buildcache-${CSP},mode=max"
+      --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}"
+      --tag "${CI_REGISTRY_IMAGE}:${CSP}"
+      --push
+      .
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
 build_aws:
-  script:
-    - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" --tag latest .
-    - docker push --all-tags "${CI_REGISTRY_IMAGE}"
+  extends: .build
   variables:
     CSP: aws
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
 build_azure:
-  script:
-    - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
-    - docker push --all-tags "${CI_REGISTRY_IMAGE}"
+  extends: .build
   variables:
     CSP: azure
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
 build_gcp:
-  script:
-    - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
-    - docker push --all-tags "${CI_REGISTRY_IMAGE}"
+  extends: .build
   variables:
     CSP: gcp
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
 build_digitalocean:
-  script:
-    - docker pull "${CI_REGISTRY_IMAGE}:${CSP}" || true
-    - docker build --build-arg CSP --cache-from "${CI_REGISTRY_IMAGE}:${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${CSP}" --tag "${CI_REGISTRY_IMAGE}:${CSP}" .
-    - docker push --all-tags "${CI_REGISTRY_IMAGE}"
+  extends: .build
   variables:
     CSP: digitalocean
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
