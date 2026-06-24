@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repo Is
 
-A single Docker image ("workstation") that bundles every tool needed for CI/CD pipelines targeting Kubernetes clusters — kubectl, helm, helmfile, flux, istioctl, kustomize, skaffold, sops, opentofu, tflint, tfsec, trivy, yq, dyff, kubent, Docker, and more. Three CSP-specific variants are built from one Dockerfile using a `CSP` build arg: `aws`, `azure`, `gcp`.
+A single Docker image ("workstation") that bundles every tool needed for CI/CD pipelines targeting Kubernetes clusters — kubectl, helm, helmfile, flux, istioctl, kustomize, skaffold, sops, opentofu, tflint, tfsec, trivy, yq, dyff, kubent, Docker, Claude Code, OpenCode, and more. Three CSP-specific variants are built from one Dockerfile using a `CSP` build arg: `aws`, `azure`, `gcp`.
 
 ## Building the Image
 

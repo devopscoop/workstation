@@ -37,6 +37,8 @@ ENV TFSEC_VERSION=v1.28.14
 ENV TF_SOPS_VERSION=1.4.1
 ENV TRIVY_VERSION=0.71.2
 ENV YQ_VERSION=v4.53.3
+ENV CLAUDE_CODE_VERSION=2.1.187
+ENV OPENCODE_VERSION=v1.17.9
 
 # ========== Pasted output from update.sh above ==========
 
@@ -69,6 +71,7 @@ RUN curl -sL -o /tmp/tflint.zip "https://github.com/terraform-linters/tflint/rel
 RUN curl -sL -o tfsec "https://github.com/tfsec/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-amd64" && chmod +x tfsec
 RUN curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" | tar -xz trivy
 RUN curl -sL -o yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" && chmod +x yq
+RUN curl -sL "https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-linux-x64.tar.gz" | tar -xz opencode && chmod +x opencode
 
 WORKDIR /root/.terraform.d/plugins/linux_amd64
 
@@ -86,6 +89,12 @@ RUN helm plugin install https://github.com/jkroepke/helm-secrets --version "${HE
 
 # Trivy templates
 RUN curl -sL -o gitlab.tpl "https://raw.githubusercontent.com/aquasecurity/trivy/v${TRIVY_VERSION}/contrib/gitlab.tpl"
+
+# Claude Code
+# The official installer drops the `claude` launcher in ~/.local/bin, so symlink
+# it into /usr/local/bin to match where every other tool lands on PATH.
+RUN curl -fsSL https://claude.ai/install.sh | bash -s "${CLAUDE_CODE_VERSION}" \
+    && ln -sf /root/.local/bin/claude /usr/local/bin/claude
 
 COPY .profile .
 

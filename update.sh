@@ -37,6 +37,8 @@ ENV TFSEC_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https:/
 ENV TF_SOPS_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/carlpett/terraform-provider-sops/releases/latest) | sed 's/^v//')
 ENV TRIVY_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/aquasecurity/trivy/releases/latest) | sed 's/^v//')
 ENV YQ_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/mikefarah/yq/releases/latest))
+ENV CLAUDE_CODE_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/anthropics/claude-code/releases/latest) | sed 's/^v//')
+ENV OPENCODE_VERSION=$(basename $(curl -s -o /dev/null -w '%{redirect_url}' https://github.com/anomalyco/opencode/releases/latest))
 
 # ========== Pasted output from update.sh above ==========
 
