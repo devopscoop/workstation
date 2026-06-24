@@ -66,10 +66,14 @@ jobs:
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
-          username: dfinitysa
+          username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          # No git push happens here (image is pushed via buildx), so the
+          # checkout token doesn't need to linger in .git/config.
+          persist-credentials: false
 
       # Tag format build-${sha7}-${unix_timestamp} drives FluxCD image automation.
       # The commit timestamp is reused as SOURCE_DATE_EPOCH for reproducible builds.
