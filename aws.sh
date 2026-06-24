@@ -16,7 +16,7 @@ esac
 cd /root
 
 # See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-${AWSCLI_ARCH}-${AWS_CLI_VERSION}.zip" -o "awscliv2.zip"
+wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O awscliv2.zip "https://awscli.amazonaws.com/awscli-exe-linux-${AWSCLI_ARCH}-${AWS_CLI_VERSION}.zip"
 unzip -q awscliv2.zip
 # We don't use sudo, because we are already running as root.
 ./aws/install
@@ -24,5 +24,7 @@ unzip -q awscliv2.zip
 # Set new working directory for the following tools
 cd /usr/local/bin
 
-curl -sL "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_${ARCH}.tar.gz" | tar -xz
+wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_${ARCH}.tar.gz"
+tar -xzf /tmp/eksctl.tar.gz eksctl
+rm /tmp/eksctl.tar.gz
 chmod +x eksctl

@@ -8,9 +8,15 @@ set -Eeuxo pipefail
 
 apt-get update
 apt-get install -y ca-certificates curl apt-transport-https gnupg
-curl -sL https://packages.microsoft.com/keys/microsoft.asc |
-    gpg --dearmor |
-    tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+# packages.microsoft.com stalls from CI runners often enough to fail the build;
+# wget retries the whole fetch and aborts a hung connection (see the Dockerfile
+# download section). Land the key in a file first so a retry restarts clean,
+# then dearmor it — piping a half-streamed key into gpg yields "no valid
+# OpenPGP data found".
+wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 \
+    -O /tmp/microsoft.asc https://packages.microsoft.com/keys/microsoft.asc
+gpg --dearmor < /tmp/microsoft.asc > /etc/apt/trusted.gpg.d/microsoft.gpg
+rm -f /tmp/microsoft.asc
 # Microsoft's azure-cli apt repo lags behind Ubuntu releases: it only publishes
 # suites up to "noble" (24.04), so on a newer base (e.g. 26.04 "resolute")
 # `lsb_release -cs` yields a codename with no Release file and apt-get update
