@@ -8,12 +8,14 @@ set -Eeuxo pipefail
 
 apt-get update
 apt-get install -y ca-certificates curl apt-transport-https gnupg
-# packages.microsoft.com stalls from CI runners often enough to fail the build;
-# wget retries the whole fetch and aborts a hung connection (see the Dockerfile
-# download section). Land the key in a file first so a retry restarts clean,
-# then dearmor it — piping a half-streamed key into gpg yields "no valid
+# packages.microsoft.com has broken IPv6 — same Azure Front Door rot as
+# get.helm.sh: GitLab runners can't reach Azure over v6, so wget loyally hangs
+# on the AAAA record until TLS gives up. -4 drags it back to IPv4. Thanks,
+# Microsoft. The retry/timeout flags handle ordinary CDN stalls (see the
+# Dockerfile download section). Land the key in a file first so a retry restarts
+# clean, then dearmor it — piping a half-streamed key into gpg yields "no valid
 # OpenPGP data found".
-wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 \
+wget -4 -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 \
     -O /tmp/microsoft.asc https://packages.microsoft.com/keys/microsoft.asc
 gpg --dearmor < /tmp/microsoft.asc > /etc/apt/trusted.gpg.d/microsoft.gpg
 rm -f /tmp/microsoft.asc
