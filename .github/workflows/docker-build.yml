@@ -134,6 +134,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # QEMU enables cross-arch (arm64) emulation. Kept in place so multi-arch
+      # builds can be re-enabled just by flipping the `platforms` line below,
+      # even though builds are pinned to amd64 for now.
       - uses: docker/setup-qemu-action@06116385d9baf250c9f4dcb4858b16962ea869c3 # v4.1.0
       - uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
 
@@ -149,9 +152,12 @@ jobs:
           # empty builds the base image.
           build-args: |
             CSP=${{ matrix.csp }}
-          # Build arm64 only on real pushes; QEMU emulation is slow and PRs only
-          # need to prove the image still builds.
-          platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+          # Pinned to amd64 for now. Multi-arch is still fully wired up (QEMU +
+          # buildx above, per-arch downloads in the Dockerfile) — to re-enable
+          # arm64, swap the line below for the commented one (arm64 only on real
+          # pushes; QEMU emulation is slow and PRs only need to prove it builds).
+          platforms: linux/amd64
+          # platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
           # Cache is per-CSP (suffixed like the tags) so variants don't poison

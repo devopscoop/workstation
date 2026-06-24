@@ -102,10 +102,16 @@ RUN helm plugin install https://github.com/jkroepke/helm-secrets --version "${HE
 RUN curl -sL -o gitlab.tpl "https://raw.githubusercontent.com/aquasecurity/trivy/v${TRIVY_VERSION}/contrib/gitlab.tpl"
 
 # Claude Code
-# The official installer drops the `claude` launcher in ~/.local/bin, so symlink
-# it into /usr/local/bin to match where every other tool lands on PATH.
-RUN curl -fsSL https://claude.ai/install.sh | bash -s "${CLAUDE_CODE_VERSION}" \
-    && ln -sf /root/.local/bin/claude /usr/local/bin/claude
+# The official installer is $HOME-relative (it drops the `claude` launcher in
+# $HOME/.local/bin). Point HOME at a neutral, world-readable location for the
+# install instead of root's home so Claude runs identically as root, as a baked
+# non-root user, or as an arbitrary --user UID (the agent sandbox; see sandbox.sh
+# / the README) — without poking a hole in /root's 0700. /opt is created 0755, so
+# every UID can traverse it. Then symlink the launcher onto PATH like every other
+# tool. (OpenCode needs none of this — it already lives in /usr/local/bin.)
+RUN mkdir -p /opt/claude \
+    && curl -fsSL https://claude.ai/install.sh | HOME=/opt/claude bash -s "${CLAUDE_CODE_VERSION}" \
+    && ln -sf /opt/claude/.local/bin/claude /usr/local/bin/claude
 
 COPY .profile .
 
