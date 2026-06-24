@@ -67,7 +67,12 @@ WORKDIR /usr/local/bin
 
 RUN curl -sL "https://github.com/homeport/dyff/releases/download/v${DYFF_VERSION}/dyff_${DYFF_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz dyff
 RUN curl -sL "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz flux && chmod +x flux
-RUN curl -sL "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz" | tar -xz && mv "linux-${TARGETARCH}/helm" ./helm && rm -rf "linux-${TARGETARCH}"
+# get.helm.sh (Google-hosted) intermittently stalls from CI runners, and piping
+# straight into tar can't recover a half-streamed download. Fetch to a file with
+# retries + a stall timeout (abort if <1KB/s for 30s) so a hung connection bails
+# fast and restarts clean instead of hanging until the stream is cut.
+RUN curl -fSL --retry 5 --retry-delay 2 --retry-all-errors --connect-timeout 30 --speed-limit 1024 --speed-time 30 -o /tmp/helm.tar.gz "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz" \
+    && tar -xzf /tmp/helm.tar.gz "linux-${TARGETARCH}/helm" && mv "linux-${TARGETARCH}/helm" ./helm && rm -rf "linux-${TARGETARCH}" /tmp/helm.tar.gz
 RUN curl -sL -o helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_${TARGETARCH}" && chmod +x helmfile
 RUN curl -sL "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-${TARGETARCH}.tar.gz" | tar -xz
 RUN curl -sL -O "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl" && chmod +x kubectl
