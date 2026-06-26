@@ -74,10 +74,9 @@ WORKDIR /usr/local/bin
 # restarts clean; HTTP errors fail the build by default.
 RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/dyff.tar.gz "https://github.com/homeport/dyff/releases/download/v${DYFF_VERSION}/dyff_${DYFF_VERSION}_linux_${TARGETARCH}.tar.gz" && tar -xzf /tmp/dyff.tar.gz dyff && rm /tmp/dyff.tar.gz
 RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/flux.tar.gz "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz" && tar -xzf /tmp/flux.tar.gz flux && chmod +x flux && rm /tmp/flux.tar.gz
-# get.helm.sh has broken IPv6. It hides behind Azure Front Door, GitLab's
-# runners can't route to Azure over v6, so wget loyally hangs on the AAAA
-# record until TLS times out. -4 drags it back to IPv4, where it works fine.
-RUN wget -4 -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/helm.tar.gz "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz" && tar -xzf /tmp/helm.tar.gz "linux-${TARGETARCH}/helm" && mv "linux-${TARGETARCH}/helm" ./helm && rm -rf "linux-${TARGETARCH}" /tmp/helm.tar.gz
+# get.helm.sh (backed by Azure Front Door) has recurring SSL failures from GitLab's
+# runners even over IPv4; the GitHub release mirror is stable.
+RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/helm.tar.gz "https://github.com/helm/helm/releases/download/${HELM_VERSION}/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz" && tar -xzf /tmp/helm.tar.gz "linux-${TARGETARCH}/helm" && mv "linux-${TARGETARCH}/helm" ./helm && rm -rf "linux-${TARGETARCH}" /tmp/helm.tar.gz
 RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_${TARGETARCH}" && chmod +x helmfile
 RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/istio.tar.gz "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-${TARGETARCH}.tar.gz" && tar -xzf /tmp/istio.tar.gz && rm /tmp/istio.tar.gz
 RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O kubectl "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl" && chmod +x kubectl
