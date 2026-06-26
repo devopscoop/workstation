@@ -77,12 +77,18 @@ RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/fl
 # get.helm.sh (Azure Front Door CDN) has intermittent SSL failures from GitLab's
 # runners. wget --retry-connrefused won't retry SSL errors; curl --retry-all-errors
 # will. -4 forces IPv4 to avoid IPv6 routing rot through Azure's CDN.
-RUN curl -4 -fsSL --retry 5 --retry-delay 5 --retry-all-errors --connect-timeout 30 --max-time 120 \
+RUN curl -4 -fsSL --retry 5 --retry-delay 10 --retry-all-errors --connect-timeout 60 --max-time 300 \
     -o /tmp/helm.tar.gz "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz" \
     && tar -xzf /tmp/helm.tar.gz "linux-${TARGETARCH}/helm" \
     && mv "linux-${TARGETARCH}/helm" ./helm \
     && rm -rf "linux-${TARGETARCH}" /tmp/helm.tar.gz
-RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O helmfile "https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_${TARGETARCH}" && chmod +x helmfile
+# helmfile moved from roboll/helmfile to helmfile/helmfile; releases are now tarballs.
+# Version ENV has a leading 'v'; strip it for the filename (e.g. v1.6.0 → 1.6.0).
+RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 \
+    -O /tmp/helmfile.tar.gz "https://github.com/helmfile/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION#v}_linux_${TARGETARCH}.tar.gz" \
+    && tar -xzf /tmp/helmfile.tar.gz helmfile \
+    && chmod +x helmfile \
+    && rm /tmp/helmfile.tar.gz
 RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/istio.tar.gz "https://github.com/istio/istio/releases/download/${ISTIOCTL_VERSION}/istioctl-${ISTIOCTL_VERSION}-linux-${TARGETARCH}.tar.gz" && tar -xzf /tmp/istio.tar.gz && rm /tmp/istio.tar.gz
 RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O kubectl "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl" && chmod +x kubectl
 RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/kubent.tar.gz "https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz" && tar -xzf /tmp/kubent.tar.gz && rm /tmp/kubent.tar.gz
