@@ -133,7 +133,12 @@ RUN mkdir -p /opt/claude \
     && wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O /tmp/claude-install.sh https://claude.ai/install.sh \
     && HOME=/opt/claude bash /tmp/claude-install.sh "${CLAUDE_CODE_VERSION}" \
     && rm /tmp/claude-install.sh \
-    && ln -sf /opt/claude/.local/bin/claude /usr/local/bin/claude
+    && ln -sf /opt/claude/.local/bin/claude /usr/local/bin/claude \
+    # Fail the build loudly if the installer no-opped. `claude install` exits 0
+    # without installing anything when updates are disabled (a managed-settings
+    # policy, or DISABLE_UPDATES=1 in the build env), which would otherwise leave
+    # a dangling symlink and a green build with no `claude` in the image.
+    && claude --version
 
 COPY .profile .
 

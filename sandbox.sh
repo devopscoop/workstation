@@ -28,7 +28,7 @@ set -euo pipefail
 AGENT="${1:-claude}"
 shift || true
 
-IMAGE="${WORKSTATION_IMAGE:-workstation}"
+IMAGE="${WORKSTATION_IMAGE:-registry.gitlab.com/dedevsecops/workstation:aws}"
 DOCKER="${DOCKER:-sudo docker}"
 
 # Keep all agent state (auth, config, history) under one gitignorable directory

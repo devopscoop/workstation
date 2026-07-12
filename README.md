@@ -47,10 +47,14 @@ You can use the image as a throwaway sandbox for an AI coding agent — [Claude 
 
 The agent gets the full DevOps toolset but none of your credentials, and can only touch the project you launch it in.
 
-First build (or pull) the image. The base image (no cloud CLI) is the natural fit for a sandbox:
+First pull (or build) the image:
 
 ```bash
-sudo docker build -t workstation .
+# Pull the pre-built AWS variant from GitLab (recommended)
+sudo docker pull registry.gitlab.com/dedevsecops/workstation:aws
+
+# Or build locally (omit --build-arg for the base image, no cloud CLI)
+sudo docker build --build-arg CSP=aws -t workstation:aws .
 ```
 
 #### One-liner
@@ -61,7 +65,7 @@ mkdir -p .sandbox-home && sudo docker run --rm -it \
   --security-opt no-new-privileges \
   -v "$PWD:/work" -w /work \
   -e HOME=/work/.sandbox-home -e USER="$(id -un)" \
-  workstation claude
+  registry.gitlab.com/dedevsecops/workstation:aws claude
 ```
 
 Swap `claude` for `opencode` to run the other agent. The `.sandbox-home/` directory keeps the agent's auth, config, and history in one place inside the project — add it to your `.gitignore`.
@@ -80,7 +84,7 @@ It honors a few environment variables:
 
 | Variable            | Default        | Purpose                                                                                 |
 | ------------------- | -------------- | --------------------------------------------------------------------------------------- |
-| `WORKSTATION_IMAGE` | `workstation`  | Image to run; point at a registry path or a CSP variant like `workstation:aws`.         |
+| `WORKSTATION_IMAGE` | `registry.gitlab.com/dedevsecops/workstation:aws` | Image to run; override with a local build or a different CSP variant.         |
 | `DOCKER`            | `sudo docker`  | How to invoke Docker; set `DOCKER=docker` if you run rootless or are in the `docker` group. |
 | `ANTHROPIC_API_KEY` | *(unset)*      | If set in your shell, it's forwarded into the container (as an env var, **not** a mounted file) so Claude Code is authenticated without an interactive login. |
 
