@@ -4,6 +4,24 @@ This image is a collection of tools that are useful for CI/CD pipelines for Kube
 
 To save a little space, the image has different versions for different cloud service providers (CSPs), but we may merge all CSP tools back into one image later if there's demand for it.
 
+## Prerequisites
+
+Everything in this repo runs inside the image, so the only local tools you need are Docker, git, and (for the maintainer scripts) bash and curl. Package manifests are included:
+
+- macOS, using [Homebrew](https://brew.sh/) and the `Brewfile`:
+
+  ```shell
+  brew bundle
+  ```
+
+- Arch Linux, using the `pkglist.txt` (all packages are in the official repos):
+
+  ```shell
+  grep -vE '^(#|$)' pkglist.txt | sudo pacman -S --needed -
+  ```
+
+On other operating systems, install Docker and git manually.
+
 ## How to Use This Image
 
 ### Fork This Repo
