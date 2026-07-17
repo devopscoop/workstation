@@ -69,3 +69,12 @@ Copied into the image and symlinked as `.bash_profile`. It runs on interactive c
 - Initializes Google Cloud SDK path/completion if installed
 - Sets up kubectl bash completion with `k` alias
 - Sets `tf` alias for `tofu`/`terraform`
+
+## Package manifests
+
+This repo ships a `Brewfile` (macOS: `brew bundle`) and a `pkglist.txt` (Arch Linux) that install the HOST-side tools (Docker, git, bash, curl). Keep them in sync with the code:
+
+- Tools added to the image via the Dockerfile run inside the container and do NOT belong in the manifests — their versions are pinned as `ENV *_VERSION=` in the Dockerfile and bumped by update.sh.
+- If you add a script or step a human runs on the host, add its tools to BOTH files, with a comment noting what uses it; remove entries when a tool stops being used.
+- Verify package names before adding them: `brew info <formula>` for Homebrew, and the official repos/AUR for Arch. If a package is AUR-only, note that in pkglist.txt's header instructions.
+- Update the "Prerequisites" section in README.md if the tool list changes.
