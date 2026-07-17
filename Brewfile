@@ -8,9 +8,12 @@
 # container — they are not local dependencies. Building and running the image
 # only needs the tools below.
 
-# Docker Desktop - `docker build` / `docker run` for the image; sandbox.sh
-# drives it too. (Alternative: `brew install docker colima` for a desktop-free setup.)
-cask "docker-desktop"
+# colima + Docker CLI - `docker build` / `docker run` for the image; sandbox.sh
+# drives it too. colima provides the Docker engine in a lightweight VM; run
+# `colima start` first, and set `DOCKER=docker` for sandbox.sh since colima
+# needs no sudo. (Alternative: the docker-desktop cask.)
+brew "colima"
+brew "docker"
 
 # bash - update.sh and sandbox.sh use bash with bashisms
 brew "bash"
