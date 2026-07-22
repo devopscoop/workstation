@@ -1,0 +1,24 @@
+# Arch Linux package list for workstation — the pacman/AUR equivalent of the
+# Brewfile. Installs every CLI tool used or referenced by this repo.
+#
+# Note: the ~25 DevOps tools (kubectl, helm, flux, opentofu, aws/az/gcloud,
+# etc.) are installed INSIDE the image by the Dockerfile and run in the
+# container — they are not local dependencies. Building and running the image
+# only needs the tools below.
+#
+# All packages are in the official repos, so plain pacman works (as do yay/paru):
+#
+# Usage:
+#   grep -vE '^(#|$)' pkglist.txt | sudo pacman -S --needed -
+
+# bash — update.sh and sandbox.sh use bash with bashisms
+bash
+
+# curl — update.sh resolves each tool's latest release version
+curl
+
+# docker — `docker build` / `docker run` for the image; sandbox.sh drives it too
+docker
+
+# git — fork/clone/update workflow in the README
+git
