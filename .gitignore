@@ -1,2 +1,6 @@
 .vscode
 
+# Agent state written by sandbox.sh when SANDBOX_HOME points into the project
+# (the default is ~/.sandbox-home). Contains credentials -- never commit it.
+.sandbox-home/
+

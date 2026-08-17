@@ -60,8 +60,8 @@ docker run -it --rm registry.gitlab.com/devopscoop/workstation bash
 You can use the image as a throwaway sandbox for an AI coding agent — [Claude Code](https://claude.com/claude-code) or [OpenCode](https://opencode.ai) — that can only see the directory you launch it in. The container:
 
 - runs as **your own UID/GID**, so files the agent writes are owned by you, not root;
-- mounts **only the current directory** (as `/work`) — nothing else;
-- gets **no access to `~/.aws`, `~/.kube`, `~/.ssh`, `~/.gnupg`**, any other host directory, or the Docker socket.
+- mounts **only the current directory** (as `/work/<dirname>`) plus a shared sandbox home (`~/.sandbox-home`) for agent state — nothing else;
+- gets **no access to `~/.aws`, `~/.kube`, `~/.ssh`, `~/.gnupg`, your real `~/.claude`**, any other host directory, or the Docker socket.
 
 The agent gets the full DevOps toolset but none of your credentials, and can only touch the project you launch it in.
 
@@ -69,7 +69,7 @@ First pull (or build) the image:
 
 ```bash
 # Pull the pre-built AWS variant from GitLab (recommended)
-sudo docker pull registry.gitlab.com/devopscoop/workstation:aws
+sudo docker pull ghcr.io/devopscoop/workstation:main-aws
 
 # Or build locally (omit --build-arg for the base image, no cloud CLI)
 sudo docker build --build-arg CSP=aws -t workstation:aws .
@@ -78,15 +78,16 @@ sudo docker build --build-arg CSP=aws -t workstation:aws .
 #### One-liner
 
 ```bash
-mkdir -p .sandbox-home && sudo docker run --rm -it \
+mkdir -p ~/.sandbox-home && sudo docker run --rm -it \
   --user "$(id -u):$(id -g)" \
   --security-opt no-new-privileges \
-  -v "$PWD:/work" -w /work \
-  -e HOME=/work/.sandbox-home -e USER="$(id -un)" \
-  registry.gitlab.com/devopscoop/workstation:aws claude
+  -v "$HOME/.sandbox-home:/sandbox-home" \
+  -v "$PWD:/work/$(basename "$PWD")" -w "/work/$(basename "$PWD")" \
+  -e HOME=/sandbox-home -e USER="$(id -un)" \
+  ghcr.io/devopscoop/workstation:main-aws claude
 ```
 
-Swap `claude` for `opencode` to run the other agent. The `.sandbox-home/` directory keeps the agent's auth, config, and history in one place inside the project — add it to your `.gitignore`.
+Swap `claude` for `opencode` to run the other agent. The `~/.sandbox-home/` directory keeps the agents' auth, config, and history in one place on the host, shared by every project's sandbox — so you log in once, not once per project. It is deliberately **not** your real `~/.claude` (the sandbox must never touch your laptop's config; on macOS the OAuth token lives in the Keychain anyway). The project mounts at `/work/<dirname>` rather than a fixed `/work` so Claude Code keeps trust, history, and `--resume` separate per project.
 
 #### Script
 
@@ -102,13 +103,15 @@ It honors a few environment variables:
 
 | Variable            | Default        | Purpose                                                                                 |
 | ------------------- | -------------- | --------------------------------------------------------------------------------------- |
-| `WORKSTATION_IMAGE` | `registry.gitlab.com/devopscoop/workstation:aws` | Image to run; override with a local build or a different CSP variant.         |
+| `WORKSTATION_IMAGE` | `ghcr.io/devopscoop/workstation:main-aws` | Image to run; override with a local build or a different CSP variant.         |
 | `DOCKER`            | `docker` on macOS, `sudo docker` on Linux | How to invoke Docker; on Linux set `DOCKER=docker` if you run rootless or are in the `docker` group. |
+| `SANDBOX_HOME`      | `~/.sandbox-home` | Host directory holding agent state, mounted as the container HOME. Shared across projects; set `SANDBOX_HOME="$PWD/.sandbox-home"` to isolate one project's agent state instead. |
 | `ANTHROPIC_API_KEY` | *(unset)*      | If set in your shell, it's forwarded into the container (as an env var, **not** a mounted file) so Claude Code is authenticated without an interactive login. |
 
 #### Notes
 
-- **Authentication.** Either export `ANTHROPIC_API_KEY` before running, or log in interactively the first time — the login is stored under `.sandbox-home/` and persists across runs.
+- **Authentication.** Either export `ANTHROPIC_API_KEY` before running, or log in interactively the first time — the login is stored under `~/.sandbox-home/` on the host and persists across runs *and* projects.
+- **Sharing trade-off.** Because every project's sandbox shares `~/.sandbox-home`, an agent in one project can read state (including credentials and settings) an agent left there from another project. If a project is untrusted enough that this matters, run it with its own `SANDBOX_HOME`.
 - **Network is open** (the agents need it to reach their APIs); only the filesystem is sandboxed.
 - The Docker CLI is in the image but the socket is intentionally **not** mounted, so the agent can't reach your host's Docker daemon.
 - Running as a non-root UID relies on Claude Code being installed under `/opt/claude` (world-readable) rather than root's home; this is handled in the `Dockerfile`. If you run an older image that installed it under `/root`, `claude` will fail with a permission error — rebuild it.
