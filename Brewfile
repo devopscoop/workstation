@@ -10,8 +10,8 @@
 
 # colima + Docker CLI - `docker build` / `docker run` for the image; sandbox.sh
 # drives it too. colima provides the Docker engine in a lightweight VM; run
-# `colima start` first, and set `DOCKER=docker` for sandbox.sh since colima
-# needs no sudo. (Alternative: the docker-desktop cask.)
+# `colima start` first. sandbox.sh defaults to sudo-less `docker` on macOS.
+# (Alternative: the docker-desktop cask.)
 brew "colima"
 brew "docker"
 

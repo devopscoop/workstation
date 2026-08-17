@@ -18,7 +18,8 @@
 #
 # Env knobs:
 #   WORKSTATION_IMAGE  image to run            (default: workstation)
-#   DOCKER             docker invocation       (default: "sudo docker"; set to
+#   DOCKER             docker invocation       (default: "docker" on macOS,
+#                                               "sudo docker" elsewhere; set to
 #                                               "docker" for rootless / docker group)
 #   ANTHROPIC_API_KEY  if set, forwarded into the container (as an env var, not a
 #                      mounted file) so Claude Code is authenticated non-interactively
@@ -28,8 +29,18 @@ set -euo pipefail
 AGENT="${1:-claude}"
 shift || true
 
-IMAGE="${WORKSTATION_IMAGE:-registry.gitlab.com/dedevsecops/workstation:aws}"
-DOCKER="${DOCKER:-sudo docker}"
+IMAGE="${WORKSTATION_IMAGE:-registry.gitlab.com/devopscoop/workstation:aws}"
+# Default the docker invocation per OS. On macOS (Docker engine via colima) the
+# socket is user-owned, and `sudo docker` would actively break -- root's docker
+# CLI has no colima context. On Linux the socket is root-owned unless you run
+# rootless or are in the docker group, so default to sudo there.
+if [[ -z "${DOCKER:-}" ]]; then
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    DOCKER="docker"
+  else
+    DOCKER="sudo docker"
+  fi
+fi
 
 # Keep all agent state (auth, config, history) under one gitignorable directory
 # inside the project, rather than scattering dotfiles in the repo root or losing
