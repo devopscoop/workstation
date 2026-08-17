@@ -91,22 +91,15 @@ Swap `claude` for `opencode` to run the other agent. The `~/.sandbox-home/` dire
 
 #### Script
 
-[`sandbox.sh`](sandbox.sh) wraps the same command. Copy it next to your project (or onto your `PATH`) and run:
+The [`ai_sandbox.sh`](https://github.com/devopscoop/scripts/blob/main/ai_sandbox.sh) script in [devopscoop/scripts](https://github.com/devopscoop/scripts) wraps the same command — copy it onto your `PATH` and run it from a project root:
 
 ```bash
-./sandbox.sh                  # Claude Code (default)
-./sandbox.sh opencode         # OpenCode
-./sandbox.sh claude --resume  # extra args pass through to the agent
+ai_sandbox.sh                  # Claude Code (default)
+ai_sandbox.sh opencode         # OpenCode
+ai_sandbox.sh claude --resume  # extra args pass through to the agent
 ```
 
-It honors a few environment variables:
-
-| Variable            | Default        | Purpose                                                                                 |
-| ------------------- | -------------- | --------------------------------------------------------------------------------------- |
-| `WORKSTATION_IMAGE` | `ghcr.io/devopscoop/workstation:main-aws` | Image to run; override with a local build or a different CSP variant.         |
-| `DOCKER`            | `docker` on macOS, `sudo docker` on Linux | How to invoke Docker; on Linux set `DOCKER=docker` if you run rootless or are in the `docker` group. |
-| `SANDBOX_HOME`      | `~/.sandbox-home` | Host directory holding agent state, mounted as the container HOME. Shared across projects; set `SANDBOX_HOME="$PWD/.sandbox-home"` to isolate one project's agent state instead. |
-| `ANTHROPIC_API_KEY` | *(unset)*      | If set in your shell, it's forwarded into the container (as an env var, **not** a mounted file) so Claude Code is authenticated without an interactive login. |
+Its environment knobs (`IMAGE`, `DOCKER`, `SANDBOX_HOME`, `ANTHROPIC_API_KEY`) are documented in that repo's README.
 
 #### Notes
 

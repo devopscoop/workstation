@@ -125,8 +125,9 @@ RUN wget -nv --tries=5 --waitretry=5 --retry-connrefused --timeout=30 -O gitlab.
 # The official installer is $HOME-relative (it drops the `claude` launcher in
 # $HOME/.local/bin). Point HOME at a neutral, world-readable location for the
 # install instead of root's home so Claude runs identically as root, as a baked
-# non-root user, or as an arbitrary --user UID (the agent sandbox; see sandbox.sh
-# / the README) — without poking a hole in /root's 0700. /opt is created 0755, so
+# non-root user, or as an arbitrary --user UID (the agent sandbox; see
+# ai_sandbox.sh in devopscoop/scripts and the README) — without poking a hole in
+# /root's 0700. /opt is created 0755, so
 # every UID can traverse it. Then symlink the launcher onto PATH like every other
 # tool. (OpenCode needs none of this — it already lives in /usr/local/bin.)
 RUN mkdir -p /opt/claude \
