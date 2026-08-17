@@ -1,0 +1,61 @@
+# Woodpecker CI: build the four CSP image variants and push them to the
+# Codeberg container registry (codeberg.org/<owner>/<repo>), mirroring
+# .gitlab-ci.yml — same tags (<short-sha>-<csp> and <csp>), same per-CSP
+# registry layer cache, and like GitLab no base-image job.
+#
+# The buildx plugin runs privileged (it starts its own dockerd). Either mark
+# the repo trusted or add woodpeckerci/plugin-docker-buildx to
+# WOODPECKER_PLUGINS_PRIVILEGED on the server.
+#
+# Multi-arch: the plugin registers QEMU binfmt itself, so an amd64 runner
+# emulates the arm64 half. Expect arm64 to dominate the build time.
+
+matrix:
+  CSP:
+    - aws
+    - azure
+    - gcp
+    - digitalocean
+
+when:
+  - event: push
+    branch: ${CI_REPO_DEFAULT_BRANCH}
+
+steps:
+  - name: build
+    image: woodpeckerci/plugin-docker-buildx:6.1.0
+    privileged: true
+    settings:
+      registry: codeberg.org
+      repo: codeberg.org/${CI_REPO}
+      dockerfile: Dockerfile
+      platforms: linux/amd64,linux/arm64
+      # Selects the CSP-specific layers at the bottom of the Dockerfile.
+      build_args:
+        CSP: ${CSP}
+      tags:
+        - ${CI_COMMIT_SHA:0:8}-${CSP}
+        - ${CSP}
+      # Layer cache per CSP so variants don't poison each other. The comma in
+      # the cache_from entry is \-escaped because list settings split on commas;
+      # cache_to is a plain string and needs no escaping.
+      cache_from:
+        - type=registry\,ref=codeberg.org/${CI_REPO}:buildcache-${CSP}
+      cache_to: type=registry,ref=codeberg.org/${CI_REPO}:buildcache-${CSP},mode=max
+      username: ${CI_REPO_OWNER}
+
+      # To create registry_password:
+      # 1. Go to https://codeberg.org/user/settings/applications.
+      # 2. Create a token with these settings:
+      #   - Token name: devopscoop/workstation/.woodpecker/build.yaml
+      #   - Set package permission to "Read and write".
+      # 3. Click "Generate token".
+      # 4. Copy the token.
+      # 5. Log into https://ci.codeberg.org.
+      # 6. Find your repo, and add a secret with these settings:
+      #   - Name: registry_password
+      #   - Value: <the token you copied earlier>
+      # 7. Click "Add secret".
+
+      password:
+        from_secret: registry_password

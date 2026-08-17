@@ -48,9 +48,10 @@ concurrency:
 jobs:
   build-image:
     runs-on: ubuntu-latest
-    # Ceiling so a hung QEMU arm64 build can't burn the 6h default. Raise if
-    # emulated builds legitimately run longer.
-    timeout-minutes: 45
+    # Ceiling so a hung build can't burn the 6h default. Sized for the QEMU-
+    # emulated arm64 half of a push build; raise if emulated builds
+    # legitimately run longer.
+    timeout-minutes: 90
     strategy:
       # One CSP's build failing shouldn't cancel the others.
       fail-fast: false
@@ -134,9 +135,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # QEMU enables cross-arch (arm64) emulation. Kept in place so multi-arch
-      # builds can be re-enabled just by flipping the `platforms` line below,
-      # even though builds are pinned to amd64 for now.
+      # QEMU provides the cross-arch emulation for the arm64 half of the
+      # multi-arch push builds below.
       - uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
       - uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
 
@@ -152,12 +152,9 @@ jobs:
           # empty builds the base image.
           build-args: |
             CSP=${{ matrix.csp }}
-          # Pinned to amd64 for now. Multi-arch is still fully wired up (QEMU +
-          # buildx above, per-arch downloads in the Dockerfile) — to re-enable
-          # arm64, swap the line below for the commented one (arm64 only on real
-          # pushes; QEMU emulation is slow and PRs only need to prove it builds).
-          platforms: linux/amd64
-          # platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+          # Multi-arch on real pushes; PRs stay amd64-only because QEMU
+          # emulation is slow and a PR only needs to prove the Dockerfile builds.
+          platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
           # Cache is per-CSP (suffixed like the tags) so variants don't poison

@@ -1,6 +1,6 @@
-# Build the CSP image variants with buildx so the pipeline is multi-arch capable.
-# Builds are pinned to amd64 for now (see PLATFORMS); the QEMU + buildx setup
-# below already supports more, so going multi-arch is a one-variable change.
+# Build the CSP image variants with buildx for amd64 + arm64. The arm64 half is
+# produced through QEMU emulation (registered in before_script), so expect it to
+# dominate the job time.
 
 image: docker:27
 
@@ -9,9 +9,9 @@ services:
 
 variables:
   DOCKER_TLS_CERTDIR: "/certs"
-  # Architectures to build. Pinned to amd64 for now; to build multi-arch just add
-  # more here, e.g. linux/amd64,linux/arm64 (QEMU is registered in before_script).
-  PLATFORMS: linux/amd64
+  # Architectures to build. Non-native arches go through the QEMU emulators
+  # registered in before_script.
+  PLATFORMS: linux/amd64,linux/arm64
 
 before_script:
   - echo "$CI_REGISTRY_PASSWORD" | docker login --password-stdin -u "$CI_REGISTRY_USER" "$CI_REGISTRY"
@@ -31,6 +31,9 @@ before_script:
 # and layer cache is kept per-CSP in a dedicated registry tag so variants don't
 # poison each other.
 .build:
+  # Headroom over the 1h project default: the QEMU-emulated arm64 build is
+  # several times slower than native. Capped by the runner's own timeout.
+  timeout: 2h
   script:
     - >
       docker buildx build

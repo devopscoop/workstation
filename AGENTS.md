@@ -69,13 +69,15 @@ If no `CSP` arg is passed, none of those `RUN if [[ "${CSP}" = ... ]]` blocks ex
 
 ## Multi-arch
 
-**Both pipelines currently build `linux/amd64` only.** arm64 support is fully wired up but switched off — GitHub Actions has the multi-arch line commented out just below the active `platforms:` line in `docker-build.yml`, and GitLab has a `PLATFORMS` variable in `.gitlab-ci.yml`. QEMU and buildx setup remain in place in both, so re-enabling arm64 is a one-line change. Don't describe the published images as multi-arch until it's flipped back on.
+**All three pipelines publish multi-arch (`linux/amd64,linux/arm64`) images.** The arch list lives in one place per pipeline: the `platforms:` line in `docker-build.yml` (GitHub Actions — where PRs stay amd64-only, since QEMU emulation is slow and a PR only needs to prove the Dockerfile builds), the `PLATFORMS` variable in `.gitlab-ci.yml`, and the `platforms` setting in `.woodpecker/build.yaml`. All three build arm64 through QEMU emulation on amd64 runners, so arm64 dominates build time — the GitHub job timeout and GitLab `timeout: 2h` are sized for that.
 
 The Dockerfile itself stays arch-agnostic: BuildKit's `TARGETARCH` is normalized to an `ENV` near the top (defaulting to `amd64` for classic builders like GitLab's that don't set it), and every download templates its arch off it. Most tools use Go-style `amd64`/`arm64`, but a few don't and are mapped inline: trivy (`64bit`/`ARM64`), opencode (`x64`/`arm64`), gcloud (`x86_64`/`arm`), and the AWS CLI (`x86_64`/`aarch64`, in `aws.sh`). **When bumping a tool, check its arch token still matches** — if a project renames its release assets, update the mapping.
 
 ## CI/CD
 
 **GitLab** (`.gitlab-ci.yml`): On every push to the default branch, four jobs (`build_aws`, `build_azure`, `build_gcp`, `build_digitalocean`) extend a shared `.build` template and each build, tag, and push their variant to the GitLab container registry with two tags: `<short-sha>-<csp>` and `<csp>`. Note this pipeline has **no base-image job** — only the four CSP variants.
+
+**Woodpecker** (`.woodpecker/build.yaml`): Mirrors the GitLab pipeline — on push to the default branch, a `CSP` matrix builds the four variants (again no base-image job) with the `plugin-docker-buildx` plugin, pushing the same `<short-sha>-<csp>` / `<csp>` tags and per-CSP `buildcache-<csp>` cache tag to the **Codeberg container registry** (`codeberg.org/${CI_REPO}`). Auth is `${CI_REPO_OWNER}` plus a single `registry_password` secret — a Codeberg access token with package read/write; creation steps are commented in the pipeline file. The plugin must be allowed to run privileged — mark the repo trusted or add it to `WOODPECKER_PLUGINS_PRIVILEGED`.
 
 **GitHub Actions — build** (`.github/workflows/docker-build.yml`): On pushes to `main`/`dev`, `v*` tags, and PRs, a single `build-image` job fans out over a `csp` matrix (`""`, `aws`, `azure`, `gcp`, `digitalocean`) to build reproducibly and push to GHCR with provenance/SBOM attestations and a Trivy scan. The empty matrix value is the base image (no cloud CLI). PRs build but don't push, and skip attestations and cache writes. Tags are CSP-scoped via a metadata-action `suffix` (e.g. `-aws`; empty for base) so variants don't clobber each other, and build cache is likewise per-CSP (`:buildcache<suffix>`). The `build-<sha7>-<commit-timestamp>` tag format feeds FluxCD image automation, and that same commit timestamp is reused as `SOURCE_DATE_EPOCH` for reproducible builds.
 
@@ -88,7 +90,7 @@ Action SHA pinning used to be automated by a daily `ghaups` workflow; that was r
 
 ## Agent Sandbox
 
-`sandbox.sh` runs Claude Code or OpenCode inside the image as a throwaway sandbox: your own UID/GID, only `$PWD` mounted (as `/work`), no `~/.aws`/`~/.kube`/`~/.ssh`/`~/.gnupg`, and no Docker socket. Agent state lives in a gitignorable `.sandbox-home/` in the project. Network is open — only the filesystem is sandboxed. Knobs: `WORKSTATION_IMAGE`, `DOCKER` (defaults to `sudo docker`), `ANTHROPIC_API_KEY` (forwarded as an env var, never a mounted file).
+`sandbox.sh` runs Claude Code or OpenCode inside the image as a throwaway sandbox: your own UID/GID, only `$PWD` mounted (as `/work`), no `~/.aws`/`~/.kube`/`~/.ssh`/`~/.gnupg`, and no Docker socket. Agent state lives in a gitignorable `.sandbox-home/` in the project. Network is open — only the filesystem is sandboxed. Knobs: `WORKSTATION_IMAGE`, `DOCKER` (defaults to `docker` on macOS, `sudo docker` on Linux), `ANTHROPIC_API_KEY` (forwarded as an env var, never a mounted file).
 
 This couples to the Dockerfile: Claude Code is installed with `HOME=/opt/claude` and symlinked onto `PATH`, specifically so an arbitrary `--user` UID can read it without poking a hole in `/root`'s `0700`. **Don't "simplify" that back to a root-home install** — it breaks every non-root run. The install is followed by `claude --version` because `claude install` exits 0 without installing anything when updates are disabled, which would otherwise leave a dangling symlink and a green build with no `claude` in the image.
 
