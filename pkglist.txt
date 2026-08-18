@@ -11,13 +11,13 @@
 # Usage:
 #   grep -vE '^(#|$)' pkglist.txt | sudo pacman -S --needed -
 
-# bash — update.sh and sandbox.sh use bash with bashisms
+# bash — update.sh uses bash with bashisms
 bash
 
 # curl — update.sh resolves each tool's latest release version
 curl
 
-# docker — `docker build` / `docker run` for the image; sandbox.sh drives it too
+# docker — `docker build` / `docker run` for the image
 docker
 
 # git — fork/clone/update workflow in the README
