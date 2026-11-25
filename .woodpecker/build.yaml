@@ -23,7 +23,7 @@ when:
 
 steps:
   - name: build
-    image: woodpeckerci/plugin-docker-buildx:6.1.0
+    image: woodpeckerci/plugin-docker-buildx:6.1.2@sha256:d26b69cbe748b8a219c707e7889d5ffb3f9214bc3c480c30fe857ff85954267c
     privileged: true
     settings:
       registry: codeberg.org
